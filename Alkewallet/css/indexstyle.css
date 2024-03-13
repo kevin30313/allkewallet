@@ -1,0 +1,52 @@
+/* page-styles.css */
+
+/* Estilos para el encabezado */
+.navbar {
+    background-color: #ccd8e0; /* Color de fondo */
+    color: #9e1313; /* Color del texto */
+}
+  /* Estilos adicionales para la imagen */
+  .image-container {
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px; /* Añade bordes redondeados */
+    transition: opacity 0.3s; /* Transición de opacidad al hacer clic */
+}
+
+.image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* Color de sombra (negro con opacidad) */
+    border-radius: 8px; /* Añade bordes redondeados */
+    opacity: 0; /* Inicialmente transparente */
+    transition: opacity 0.3s; /* Transición de opacidad al hacer clic */
+}
+
+.image-container:hover::before,
+.image-container:active::before {
+    opacity: 1; /* Hace que la sombra sea visible al pasar el ratón o al hacer clic */
+}
+/* Estilos para el contenido de la billetera */
+#walletContent {
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+}
+
+/* Estilos para el pie de página */
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+}

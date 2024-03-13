@@ -1,0 +1,47 @@
+/* navbarstyle.css */
+
+/* Estilos para la barra de navegación */
+.navbar {
+    background-color: rgba(87, 35, 100, 0.7); /* Púrpura metálico con 70% de opacidad */
+    transition: background-color 0.3s ease; /* Agregar transición de color */
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+    color: #00ff00 !important; /* Letras verdes */
+    font-family: 'Roboto', sans-serif; /* Aplicar Roboto como fuente */
+}
+
+.navbar-toggler-icon {
+    background-color: #00ff00; /* Ícono de hamburguesa verde */
+}
+
+/* Cambiar el color de fondo al pasar el ratón */
+.navbar:hover {
+    background-color: rgba(87, 35, 100, 1); /* Púrpura metálico sin opacidad */
+}
+
+/* Estilos adicionales para personalizar la apariencia del recuadro del saldo */
+.alert-primary {
+    background-color: #572364; /* Púrpura metálico */
+    color: #00ff00; /* Letras verdes */
+}
+
+/* Contenido específico del menú del usuario */
+.container {
+    text-align: center;
+}
+
+/* Estilos para el botón de "Enviar Dinero" */
+.btn-primary {
+    background-color: #572364; /* Púrpura metálico */
+    border-color: #00ff00; /* Borde verde */
+    color: #00ff00; /* Letras verdes */
+    font-family: 'Roboto', sans-serif; /* Aplicar Roboto como fuente */
+}
+
+.btn-primary:hover {
+    background-color: #00ff00; /* Fondo verde al pasar el mouse */
+    border-color: #00ff00; /* Borde verde */
+    color: #572364; /* Letras púrpuras metálicas al pasar el mouse */
+}

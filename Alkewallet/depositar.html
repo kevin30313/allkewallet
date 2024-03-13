@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Depósito</title>
+    <link rel="stylesheet" href="css/depositar.css"> <!-- Asegúrate de vincular tu propia hoja de estilo si la tienes -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Depósito</h2>
+
+    <form action="procesar_deposito.php" method="post" class="needs-validation" novalidate>
+        <div class="form-group">
+            <label for="monto">Monto:</label>
+            <input type="text" class="form-control" id="monto" name="monto" required>
+            <div class="invalid-feedback">Por favor, ingresa un monto válido.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="metodo">Método de Depósito:</label>
+            <select class="form-control" id="metodo" name="metodo" required>
+                <option value="" disabled selected>Selecciona un método</option>
+                <option value="webpay">WebPay</option>
+                <option value="kippu">Kippu</option>
+            </select>
+            <div class="invalid-feedback">Por favor, selecciona un método de depósito.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Realizar Depósito</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Validación de formulario utilizando Bootstrap
+    (function() {
+        'use strict';
+
+        window.addEventListener('load', function() {
+            // Obtén todos los formularios a los que queremos aplicar estilos de validación de Bootstrap
+            var forms = document.getElementsByClassName('needs-validation');
+
+            // Haz un bucle sobre ellos y evita que se envíen
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+
+</body>
+</html>

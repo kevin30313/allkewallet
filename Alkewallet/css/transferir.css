@@ -1,0 +1,62 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to right, #141e30, #243b55);
+    color: #fff;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+h1 {
+    color: #3498db;
+    text-align: center;
+}
+
+#transferForm {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+}
+
+label {
+    color: #3498db;
+}
+
+input {
+    border: 1px solid #3498db;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+/* Estilo para los mensajes de error */
+.error {
+    color: red;
+    font-size: 12px;
+    margin-bottom: 8px; /* Ajusta el espacio entre el campo y el mensaje de error */
+}
+
+button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease; /* Agregué efecto de transición */
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+@media (max-width: 600px) {
+    #transferForm {
+        margin: 0;
+    }
+}
