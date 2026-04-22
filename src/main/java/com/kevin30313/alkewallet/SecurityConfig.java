@@ -17,8 +17,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**", "/register", "/login").permitAll() // Rutas públicas
                 .anyRequest().authenticated() // Todo lo demás requiere login
             )
-            .formLogin(form -> form.permitAll()) // Mantiene el formulario por si lo necesitas
-            .logout(logout -> logout.permitAll());
+            .formLogin(form -> form.disable()) // Mantiene el formulario por si lo necesitas
+            .httpBasic(basic -> basic.disable());
 
         return http.build();
     }
