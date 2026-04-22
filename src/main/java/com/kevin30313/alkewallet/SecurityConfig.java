@@ -15,7 +15,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Deshabilitamos CSRF para pruebas iniciales
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**", "/register", "/login").permitAll() // Rutas públicas
-                .anyRequest().authenticated() // Todo lo demás requiere login
+                .anyRequest().permitAll() // Todo lo demás requiere login
             )
             .formLogin(form -> form.disable()) // Mantiene el formulario por si lo necesitas
             .httpBasic(basic -> basic.disable());
