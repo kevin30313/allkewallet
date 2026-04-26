@@ -25,13 +25,13 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll() // Rutas de login/registro públicas
-                .anyRequest().authenticated()               // Todo lo demás bloqueado por defecto
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
+                .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Importante: Sin estado
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            // Aquí añadimos tu "guardia" de JWT
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
