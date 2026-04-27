@@ -9,4 +9,4 @@ function App() {
   );
 }
 
-export default App; // <--- ESTA LÍNEA ES LA QUE FALTA
+export default App; // 
