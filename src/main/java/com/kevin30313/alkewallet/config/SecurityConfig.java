@@ -42,7 +42,7 @@ public class SecurityConfig {
             config.setAllowedHeaders(java.util.List.of("*"));
             config.setAllowCredentials(true);
             return config;
-        })
+        }))
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/auth/**").permitAll() // Tus rutas de login/register
