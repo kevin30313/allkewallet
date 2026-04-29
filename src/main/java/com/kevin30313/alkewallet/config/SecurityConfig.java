@@ -36,7 +36,7 @@ public class SecurityConfig {
             config.setAllowedOrigins(java.util.List.of(
                 "http://localhost:5173", 
                 "http://localhost:5174", 
-                "https://alkewallet-frontend.onrender.com/"
+                "https://alkewallet-frontend.onrender.com"
             ));
             config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             config.setAllowedHeaders(java.util.List.of("*"));
