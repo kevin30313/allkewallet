@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // Tu URL de Render (asegúrate de que no tenga un "/" al final de "api")
+    
     baseURL: 'https://allkewallet-api.onrender.com/api',
 });
 
