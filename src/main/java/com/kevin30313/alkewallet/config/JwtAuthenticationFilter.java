@@ -1,6 +1,6 @@
 package com.kevin30313.alkewallet.config;
 
-import com.kevin30313.alkewallet.repository.UserRepository; // Importante
+import com.kevin30313.alkewallet.repository.UserRepository;
 import com.kevin30313.alkewallet.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,37 +23,55 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtService jwtService;
 
     @Autowired
-    private UserRepository userRepository; // Usamos el repositorio directamente
+    private UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
+        // 1. Obtener la ruta de la petición
+        String path = request.getServletPath();
+
+        // 2. EXCEPCIÓN: Si la ruta es de autenticación, dejar pasar de inmediato sin filtrar
+        // Esto evita el 403 cuando el usuario intenta loguearse o registrarse
+        if (path.startsWith("/api/auth/") || path.contains("/login") || path.contains("/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String username; // Cambiado de userEmail a username por claridad
+        final String username;
 
+        // Si no hay header o no empieza con Bearer, seguimos con la cadena de filtros
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         jwt = authHeader.substring(7);
-        username = jwtService.extractUsername(jwt);
+        
+        try {
+            username = jwtService.extractUsername(jwt);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Buscamos directamente en el repo para evitar el ciclo con UserDetailsService
-            UserDetails userDetails = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-            
-            if (jwtService.isTokenValid(jwt, userDetails.getUsername())) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                // Buscamos directamente en el repo para evitar dependencias circulares
+                UserDetails userDetails = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
                 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                if (jwtService.isTokenValid(jwt, userDetails.getUsername())) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (Exception e) {
+            // Si el token es inválido o expiró, simplemente seguimos sin autenticar el contexto
+            logger.error("No se pudo establecer la autenticación de usuario: " + e.getMessage());
         }
+
         filterChain.doFilter(request, response);
     }
 }
