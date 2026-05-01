@@ -1,0 +1,5 @@
+package com.kevin30313.alkewallet.config;
+
+public class JwtAuthenticationFilter {
+
+}

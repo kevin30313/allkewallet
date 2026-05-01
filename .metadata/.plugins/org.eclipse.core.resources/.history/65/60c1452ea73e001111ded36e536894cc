@@ -1,0 +1,32 @@
+package com.kevin30313.alkewallet.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.kevin30313.alkewallet.model.User;
+import com.kevin30313.alkewallet.repository.UserRepository;
+
+import dto.RegisterRequest;
+
+	@Service
+	public class AuthService {
+
+	    @Autowired
+	    private UserRepository userRepository;
+
+	    @Autowired
+	    private PasswordEncoder passwordEncoder;
+
+	    public User register(RegisterRequest request) {
+	        User user = new User();
+	        user.setUsername(request.getUsername());
+	        user.setEmail(request.getEmail());
+	        
+	        // Aquí usamos el Bean que definiste en SecurityConfig para encriptar
+	        user.setPassword(passwordEncoder.encode(request.getPassword()));
+	        
+	        return userRepository.save(user);
+	    }
+	}
+

@@ -1,10 +1,17 @@
+# --- Carpeta de Eclipse (Lo que más te ensuciaba) ---
+.metadata/
+bin/
+*.tmp
+*.bak
+
+# --- Java / Maven (Tu base original mejorada) ---
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+# --- STS / Eclipse / IntelliJ / VS Code ---
 .apt_generated
 .classpath
 .factorypath
@@ -12,22 +19,19 @@ target/
 .settings
 .springBeans
 .sts4-cache
-
-### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
 .vscode/
+
+# --- Frontend (Node / React) ---
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env.production.local
+
+# --- macOS ---
+.DS_Store
