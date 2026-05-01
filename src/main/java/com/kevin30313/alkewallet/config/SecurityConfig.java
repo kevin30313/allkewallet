@@ -45,9 +45,11 @@ public class SecurityConfig {
         }))
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/**").permitAll() // Tus rutas de login/register
-            .anyRequest().authenticated()
-        )
+    // Permitimos /login, /auth/login y cualquier cosa que empiece con /api/auth/
+        .requestMatchers("/login", "/auth/**", "/api/auth/**").permitAll() 
+        .anyRequest().authenticated()
+     )
+        
         .sessionManagement(session -> session
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         )
