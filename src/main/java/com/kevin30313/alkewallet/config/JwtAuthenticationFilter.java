@@ -29,21 +29,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
-        // 1. Obtener la ruta de la petición
-        String path = request.getServletPath();
+        // CAMBIO CLAVE: Usamos getRequestURI() para capturar la ruta completa
+        String path = request.getRequestURI();
 
-        // 2. EXCEPCIÓN: Si la ruta es de autenticación, dejar pasar de inmediato sin filtrar
-        // Esto evita el 403 cuando el usuario intenta loguearse o registrarse
-        if (path.startsWith("/api/auth/") || path.contains("/login") || path.contains("/register")) {
+        // Si la ruta contiene auth, login o register, saltamos el filtro de inmediato
+        if (path.contains("/api/auth/") || path.contains("/login") || path.contains("/register")) {
             filterChain.doFilter(request, response);
-            return;
+            return; // Este return es vital para no ejecutar el código de abajo
         }
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
 
-        // Si no hay header o no empieza con Bearer, seguimos con la cadena de filtros
+        // Si no hay token, simplemente seguimos la cadena (Spring Security dirá si la ruta requiere o no auth)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -55,7 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             username = jwtService.extractUsername(jwt);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // Buscamos directamente en el repo para evitar dependencias circulares
                 UserDetails userDetails = userRepository.findByUsername(username)
                         .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
                 
@@ -68,8 +66,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            // Si el token es inválido o expiró, simplemente seguimos sin autenticar el contexto
-            logger.error("No se pudo establecer la autenticación de usuario: " + e.getMessage());
+            // Logueamos pero dejamos que la cadena siga; Spring se encargará del 403 si la ruta era protegida
+            System.err.println("Error procesando JWT: " + e.getMessage());
         }
 
         filterChain.doFilter(request, response);
