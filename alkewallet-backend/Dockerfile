@@ -8,4 +8,4 @@ RUN mvn clean package -DskipTests
 FROM amazoncorretto:17-alpine
 COPY --from=build /target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dserver.port=${PORT}", "-jar", "app.jar"]
