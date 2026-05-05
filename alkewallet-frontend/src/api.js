@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
     
-    baseURL: 'https://allkewallet-api.onrender.com/api',
+    baseURL: 'https://allkewallet-api.onrender.com',
 });
 
 // Este "Interceptor" es como un guardia de seguridad: 
