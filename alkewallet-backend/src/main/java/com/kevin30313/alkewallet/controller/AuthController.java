@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.*;
 import com.kevin30313.alkewallet.dto.LoginRequest; 
 import com.kevin30313.alkewallet.dto.RegisterRequest;
 import com.kevin30313.alkewallet.service.AuthService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "https://alkewallet-frontend.onrender.com") 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
