@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import api from './api'; // Importamos la configuración de Axios que creamos
+import api from './api'; // Tu configuración de Axios
 import './App.css';
 
 const Login = () => {
-    // Estado para capturar lo que el usuario escribe
-    const [credentials, setCredentials] = useState({ username: '', password: '' });
+    // Cambiamos 'username' a 'email' porque tu Backend busca por email en la DB
+    const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
 
     const handleChange = (e) => {
@@ -13,41 +13,55 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(''); // Limpiamos errores previos
+        setError(''); // Limpiamos errores visuales previos
+        
+        // 1. LIMPIEZA PREVIA: Borramos cualquier rastro de sesiones anteriores
+        // Esto evita el error 403 (Forbidden) que vimos en tus capturas
+        localStorage.removeItem('token'); 
         
         try {
-            // Enviamos los datos a tu API en Render
+            // Enviamos los datos a tu API en Render (https://allkewallet-api.onrender.com)
             const response = await api.post('/auth/login', credentials);
             
-            // Si el backend responde bien, nos da el Token (un string largo)
+            // Si el backend responde bien, recibimos el Token JWT
             const token = response.data; 
             
-            // Guardamos el token en el navegador para usarlo en otras pantallas
+            // 2. GUARDADO: Almacenamos el nuevo token en el navegador
             localStorage.setItem('token', token);
             
             alert('¡Conexión exitosa! Bienvenido a AlkeWallet.');
-            console.log("Token guardado:", token);
+            console.log("Token guardado con éxito:", token);
             
-            // TODO: Redireccionar al Dashboard cuando lo tengamos listo
+            // 3. REDIRECCIÓN: Una vez que el usuario da "OK", lo mandamos al home
+            window.location.href = '/dashboard'; // O usa navigate('/dashboard') si tienes react-router
+            
         } catch (err) {
-            console.error(err);
-            setError('Error: Usuario no encontrado o servidor caído.');
+            console.error("Error en el proceso de login:", err);
+            
+            // Manejo de errores basado en la respuesta del servidor
+            if (err.response?.status === 403) {
+                setError('Acceso denegado (403). Intenta borrar la caché del navegador.');
+            } else if (err.response?.status === 401) {
+                setError('Credenciales incorrectas. Revisa tu correo y contraseña.');
+            } else {
+                setError('Error: Usuario no encontrado o el servidor de Render está despertando.');
+            }
         }
     };
 
     return (
         <div className="login-container">
-            <h2>AlkeWallet</h2>
-            <p style={{ color: '#00f2ff', fontSize: '0.8rem', marginBottom: '20px' }}>
+            <h2 style={{ letterSpacing: '2px' }}>ALKEWALLET</h2>
+            <p style={{ color: '#00f2ff', fontSize: '0.8rem', marginBottom: '20px', textTransform: 'uppercase' }}>
                 Secure Cloud Banking
             </p>
             
             <form onSubmit={handleSubmit}>
                 <div style={{ marginBottom: '15px' }}>
                     <input
-                        name="username"
-                        type="text"
-                        placeholder="NOMBRE DE USUARIO"
+                        name="email"  // Cambiado a email para coincidir con la lógica del Backend
+                        type="email"
+                        placeholder="CORREO ELECTRÓNICO"
                         className="neon-input"
                         onChange={handleChange}
                         required
@@ -73,8 +87,9 @@ const Login = () => {
                 <div style={{ 
                     marginTop: '20px', 
                     color: '#ff4d4d', 
-                    textShadow: '0 0 5px #ff4d4d',
-                    fontSize: '0.9rem' 
+                    textShadow: '0 0 8px #ff4d4d',
+                    fontSize: '0.8rem',
+                    fontWeight: 'bold'
                 }}>
                     {error}
                 </div>
