@@ -1,12 +1,16 @@
 package com.kevin30313.alkewallet.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.kevin30313.alkewallet.dto.LoginRequest; 
 import com.kevin30313.alkewallet.dto.RegisterRequest;
 import com.kevin30313.alkewallet.service.AuthService;
+
+import java.util.Collections;
+import java.util.Map;
 
 @CrossOrigin(origins = "https://alkewallet-frontend.onrender.com") 
 @RestController
@@ -19,23 +23,29 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
-            return ResponseEntity.ok(authService.register(request));
+            // Es buena práctica devolver 201 Created para registros exitosos
+            return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
         }
     }
 
-    
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-     try {
-        System.out.println("DEBUG: Intento de login para: " + request.getEmail());
-        String response = authService.login(request);
-        return ResponseEntity.ok(response);
-    } catch (Exception e) {
-        // ESTO ES LO MÁS IMPORTANTE: Imprimir el error real en la consola de Render
-        e.printStackTrace(); 
-        return ResponseEntity.status(401).body("Error real: " + e.getMessage());
+        try {
+            System.out.println("DEBUG: Intento de login para: " + request.getEmail());
+            String token = authService.login(request);
+            
+            // IMPORTANTE: Devolvemos un JSON { "token": "valor..." } 
+            // Esto evita problemas de parseo en el Frontend
+            return ResponseEntity.ok(Collections.singletonMap("token", token));
+            
+        } catch (Exception e) {
+            e.printStackTrace(); 
+            // Enviamos un JSON incluso en el error para mantener la consistencia
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body(Collections.singletonMap("error", "Credenciales inválidas o error de servidor"));
         }
     }
 }
