@@ -38,8 +38,8 @@ public class AuthService {
     public String login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
-                request.getEmail(), 
-                request.getPassword()
+                request.getEmail().trim(), 
+                request.getPassword().trim()
             )
         );
 
