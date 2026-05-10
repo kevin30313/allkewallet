@@ -81,6 +81,21 @@ const Login = () => {
                 <button type="submit" className="neon-button">
                     INICIAR SESIÓN
                 </button>
+                <div style={{ marginTop: '20px', textAlign: 'center' }}>
+            <p style={{ color: '#8892b0' }}>
+                ¿No tienes cuenta? {' '}
+                <a 
+                    href="/register" 
+                    onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = '/register';
+                    }}
+                    style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 'bold' }}
+                >
+                    Regístrate aquí
+                </a>
+            </p>
+        </div>
             </form>
 
             {error && (
