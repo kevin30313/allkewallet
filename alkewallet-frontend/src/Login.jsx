@@ -13,32 +13,40 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        // Limpieza de seguridad antes de iniciar nueva sesión
         localStorage.removeItem('token'); 
         
         try {
+            // Petición a tu API en Render
             const response = await api.post('/auth/login', credentials);
             const token = response.data; 
+            
+            // Guardamos el JWT
             localStorage.setItem('token', token);
             alert('¡Conexión exitosa! Bienvenido a AlkeWallet.');
+            
+            // Redirección manual al dashboard
             window.location.href = '/dashboard'; 
         } catch (err) {
             if (err.response?.status === 403) {
-                setError('Acceso denegado (403). Intenta borrar la caché.');
+                setError('Acceso denegado (403). Intenta borrar la caché o revisar el rol.');
             } else if (err.response?.status === 401) {
-                setError('Credenciales incorrectas.');
+                setError('Credenciales incorrectas. Verifica tu correo y contraseña.');
             } else {
-                setError('Error: El servidor de Render está despertando...');
+                setError('Error: El servidor de Render está despertando. Reintenta en unos segundos.');
             }
         }
     };
 
     return (
         <div className="auth-page">
-            {/* 1. HEADER PRO */}
+            {/* 1. HEADER CON LOGO NEÓN */}
             <header className="auth-header">
                 <div className="logo-container">
-                    <span className="logo-icon">⚡</span>
-                    <span className="logo-text">ALKEWALLET</span>
+                    <div className="logo-glow-wrapper">
+                        <span className="logo-icon-neon">⚡</span>
+                    </div>
+                    <span className="logo-text-neon">ALKE<span>WALLET</span></span>
                 </div>
                 <nav className="auth-nav">
                     <a href="https://github.com/kevin30313" target="_blank" rel="noreferrer">GitHub</a>
@@ -46,16 +54,17 @@ const Login = () => {
             </header>
 
             <main className="auth-main">
-                {/* 2. LADO IZQUIERDO: TU ARTE DE TURTLE */}
+                {/* 2. LADO IZQUIERDO: ARTE GEOMÉTRICO (TURTLE) */}
                 <section className="auth-visual">
                     <div className="turtle-art-container">
-                        {/* Aquí puedes poner una <img src={tuImagen} /> de tus diseños de Turtle */}
                         <h2 className="visual-title">Finanzas con <br/><span>ADN Digital</span></h2>
-                        <p style={{color: '#8892b0', marginTop: '10px'}}>Inspirado en patrones geométricos de Python</p>
+                        <p style={{color: '#8892b0', marginTop: '10px', fontWeight: '300'}}>
+                            Inspirado en patrones geométricos de Python
+                        </p>
                     </div>
                 </section>
 
-                {/* 3. LADO DERECHO: TU FORMULARIO LOGIK */}
+                {/* 3. LADO DERECHO: FORMULARIO DE ACCESO */}
                 <section className="auth-form-container">
                     <div className="login-container">
                         <h2 className="form-title">Iniciar Sesión</h2>
@@ -83,21 +92,30 @@ const Login = () => {
                                 INGRESAR
                             </button>
 
-                            {error && <div className="error-message">{error}</div>}
+                            {error && (
+                                <div className="error-message" style={{ color: '#ff4d4d', marginTop: '15px', fontSize: '0.85rem' }}>
+                                    {error}
+                                </div>
+                            )}
                         </form>
 
-                        <div className="auth-options">
-                            <p>¿No tienes cuenta? <a href="/register">Regístrate aquí</a></p>
+                        <div className="auth-options" style={{ marginTop: '20px' }}>
+                            <p style={{ color: '#8b949e', fontSize: '0.9rem' }}>
+                                ¿No tienes cuenta? <a href="/register" style={{ color: 'var(--neon-blue)', textDecoration: 'none', fontWeight: '600' }}>Regístrate aquí</a>
+                            </p>
                         </div>
                     </div>
                 </section>
             </main>
 
-            {/* 4. FOOTER PRO */}
+            {/* 4. FOOTER CON STACK TECNOLÓGICO */}
             <footer className="auth-footer">
                 <p>© 2026 AlkeWallet | Desarrollado por Kevin Rojas | Cloud Engineering Student</p>
-                <div className="tech-badges">
-                    <span>Java</span><span>AWS</span><span>Docker</span><span>React</span>
+                <div className="tech-badges" style={{ marginTop: '10px' }}>
+                    <span>Java</span>
+                    <span>AWS</span>
+                    <span>Docker</span>
+                    <span>React</span>
                 </div>
             </footer>
         </div>

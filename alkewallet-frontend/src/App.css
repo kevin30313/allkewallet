@@ -1,4 +1,4 @@
-/* 1. CONFIGURACIÓN GLOBAL */
+/* 1. CONFIGURACIÓN GLOBAL Y VARIABLES */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
 
 :root {
@@ -17,10 +17,10 @@ body {
   color: var(--text-main);
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
-  /* Eliminamos el flex center del body para que el Header y Footer fluyan */
+  overflow-x: hidden;
 }
 
-/* 2. ESTRUCTURA DE LA PÁGINA (LAYOUT) */
+/* 2. ESTRUCTURA DEL LAYOUT (Pantalla Dividida) */
 .auth-page {
   display: flex;
   flex-direction: column;
@@ -30,20 +30,51 @@ body {
 .auth-header {
   display: flex;
   justify-content: space-between;
-  padding: 1.2rem 5%;
+  padding: 1rem 5%;
   align-items: center;
   border-bottom: 1px solid var(--border-subtle);
-  background: rgba(11, 13, 14, 0.8);
+  background: rgba(11, 13, 14, 0.9);
   backdrop-filter: blur(10px);
+  z-index: 10;
 }
 
 .auth-main {
-  flex: 1; /* Esto hace que el centro crezca y empuje el footer abajo */
+  flex: 1;
   display: grid;
-  grid-template-columns: 1.2fr 1fr; /* Pantalla dividida */
+  grid-template-columns: 1.2fr 1fr; /* Arte a la izquierda, Formulario a la derecha */
 }
 
-/* 3. SECCIÓN VISUAL (TU ARTE TURTLE) */
+/* 3. ESTILOS DEL LOGO NEÓN (Actualizado) */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon-neon {
+  font-size: 1.8rem;
+  color: #fff;
+  text-shadow: 
+    0 0 5px #fff,
+    0 0 10px var(--neon-blue),
+    0 0 20px var(--neon-blue);
+  animation: neon-flicker 3s infinite alternate;
+}
+
+.logo-text-neon {
+  font-weight: 600;
+  letter-spacing: 2px;
+  font-size: 1.4rem;
+  color: #fff;
+}
+
+.logo-text-neon span {
+  color: var(--neon-blue);
+  font-weight: 300;
+  text-shadow: 0 0 10px var(--neon-blue);
+}
+
+/* 4. SECCIÓN VISUAL (Arte de Turtle) */
 .auth-visual {
   background: radial-gradient(circle at center, #161b22 0%, #0b0d0e 100%);
   display: flex;
@@ -57,101 +88,127 @@ body {
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 600;
   line-height: 1.1;
+  margin: 0;
 }
 
 .visual-title span {
   color: var(--neon-blue);
-  text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+  text-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
 }
 
-/* 4. SECCIÓN DEL FORMULARIO */
+/* 5. SECCIÓN DEL FORMULARIO */
 .auth-form-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
+  padding: 3rem;
 }
 
 .login-container {
-  background-color: transparent; /* Ahora el fondo lo da el main */
   width: 100%;
   max-width: 380px;
 }
 
 .form-title {
-  font-size: 2rem;
+  font-size: 2.2rem;
   margin-bottom: 0.5rem;
-  color: var(--text-main);
+  font-weight: 600;
 }
 
 .form-subtitle {
   color: var(--text-dim);
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
+  margin-bottom: 2.5rem;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-/* 5. INPUTS Y BOTONES (TU ESTILO MEJORADO) */
+/* 6. INPUTS Y BOTONES NEÓN */
 .neon-input {
   width: 100%;
   padding: 14px;
-  margin: 10px 0;
+  margin: 12px 0;
   background: #0d1117;
   border: 1px solid #30363d;
   border-radius: 8px;
   color: white;
   box-sizing: border-box;
   transition: all 0.3s ease;
+  font-size: 0.9rem;
 }
 
 .neon-input:focus {
   outline: none;
   border-color: var(--neon-blue);
-  box-shadow: 0 0 12px rgba(0, 242, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.15);
 }
 
 .neon-button {
   width: 100%;
   padding: 14px;
-  margin-top: 20px;
+  margin-top: 25px;
   background-color: transparent;
   color: var(--neon-blue);
   border: 2px solid var(--neon-blue);
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   transition: all 0.3s ease;
 }
 
 .neon-button:hover {
   background-color: var(--neon-blue);
   color: #000;
-  box-shadow: 0 0 25px var(--neon-blue);
+  box-shadow: 0 0 30px var(--neon-blue);
 }
 
-/* 6. FOOTER */
+/* 7. FOOTER Y BADGES */
 .auth-footer {
   padding: 1.5rem;
   text-align: center;
   border-top: 1px solid var(--border-subtle);
   color: var(--text-dim);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  background: var(--bg-color);
+}
+
+.tech-badges {
+  margin-top: 12px;
 }
 
 .tech-badges span {
   margin: 0 8px;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border: 1px solid #30363d;
   border-radius: 4px;
-  background: #0d1117;
+  background: #161b22;
+  font-size: 0.75rem;
+  color: #c9d1d9;
 }
 
-/* 7. RESPONSIVE */
+/* 8. ANIMACIONES */
+@keyframes neon-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+    opacity: 0.5;
+  }
+}
+
+/* 9. RESPONSIVE (Móviles y Tablets) */
 @media (max-width: 900px) {
   .auth-main {
     grid-template-columns: 1fr;
   }
   .auth-visual {
-    display: none; /* En móvil solo dejamos el login para evitar scroll infinito */
+    display: none; /* Ocultamos el arte en móviles para priorizar el login */
+  }
+  .auth-header {
+    padding: 1rem 20px;
   }
 }
