@@ -1,4 +1,4 @@
-/* Importamos una fuente moderna */
+/* 1. CONFIGURACIÓN GLOBAL */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
 
 :root {
@@ -8,6 +8,7 @@
   --neon-purple: #bc13fe;
   --text-main: #ffffff;
   --text-dim: #8b949e;
+  --border-subtle: rgba(255, 255, 255, 0.05);
 }
 
 body {
@@ -15,67 +16,142 @@ body {
   background-color: var(--bg-color);
   color: var(--text-main);
   font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  /* Eliminamos el flex center del body para que el Header y Footer fluyan */
+}
+
+/* 2. ESTRUCTURA DE LA PÁGINA (LAYOUT) */
+.auth-page {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   min-height: 100vh;
 }
 
-/* Contenedor del Login */
-.login-container {
-  background-color: var(--card-bg);
-  padding: 2.5rem;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(0, 242, 255, 0.1); /* Resplandor suave */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
+.auth-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.2rem 5%;
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(11, 13, 14, 0.8);
+  backdrop-filter: blur(10px);
 }
 
-h2 {
+.auth-main {
+  flex: 1; /* Esto hace que el centro crezca y empuje el footer abajo */
+  display: grid;
+  grid-template-columns: 1.2fr 1fr; /* Pantalla dividida */
+}
+
+/* 3. SECCIÓN VISUAL (TU ARTE TURTLE) */
+.auth-visual {
+  background: radial-gradient(circle at center, #161b22 0%, #0b0d0e 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10%;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.visual-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.visual-title span {
   color: var(--neon-blue);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 1.5rem;
+  text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
 }
 
-/* Estilo de los inputs */
+/* 4. SECCIÓN DEL FORMULARIO */
+.auth-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.login-container {
+  background-color: transparent; /* Ahora el fondo lo da el main */
+  width: 100%;
+  max-width: 380px;
+}
+
+.form-title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-main);
+}
+
+.form-subtitle {
+  color: var(--text-dim);
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+/* 5. INPUTS Y BOTONES (TU ESTILO MEJORADO) */
 .neon-input {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   margin: 10px 0;
   background: #0d1117;
   border: 1px solid #30363d;
   border-radius: 8px;
   color: white;
-  box-sizing: border-box; /* Importante para que no se salgan del cuadro */
-  transition: border 0.3s ease;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .neon-input:focus {
   outline: none;
   border-color: var(--neon-blue);
-  box-shadow: 0 0 8px rgba(0, 242, 255, 0.4);
+  box-shadow: 0 0 12px rgba(0, 242, 255, 0.2);
 }
 
-/* El botón neón */
 .neon-button {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   margin-top: 20px;
   background-color: transparent;
   color: var(--neon-blue);
   border: 2px solid var(--neon-blue);
   border-radius: 8px;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
-  text-transform: uppercase;
+  letter-spacing: 1px;
   transition: all 0.3s ease;
 }
 
 .neon-button:hover {
   background-color: var(--neon-blue);
   color: #000;
-  box-shadow: 0 0 20px var(--neon-blue);
+  box-shadow: 0 0 25px var(--neon-blue);
+}
+
+/* 6. FOOTER */
+.auth-footer {
+  padding: 1.5rem;
+  text-align: center;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+.tech-badges span {
+  margin: 0 8px;
+  padding: 3px 10px;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  background: #0d1117;
+}
+
+/* 7. RESPONSIVE */
+@media (max-width: 900px) {
+  .auth-main {
+    grid-template-columns: 1fr;
+  }
+  .auth-visual {
+    display: none; /* En móvil solo dejamos el login para evitar scroll infinito */
+  }
 }

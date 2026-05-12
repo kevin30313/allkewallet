@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import api from './api'; // Tu configuración de Axios
+import api from './api'; 
 import './App.css';
 
 const Login = () => {
-    // Cambiamos 'username' a 'email' porque tu Backend busca por email en la DB
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
 
@@ -13,102 +12,94 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(''); // Limpiamos errores visuales previos
-        
-        // 1. LIMPIEZA PREVIA: Borramos cualquier rastro de sesiones anteriores
-        // Esto evita el error 403 (Forbidden) que vimos en tus capturas
+        setError('');
         localStorage.removeItem('token'); 
         
         try {
-            // Enviamos los datos a tu API en Render (https://allkewallet-api.onrender.com)
             const response = await api.post('/auth/login', credentials);
-            
-            // Si el backend responde bien, recibimos el Token JWT
             const token = response.data; 
-            
-            // 2. GUARDADO: Almacenamos el nuevo token en el navegador
             localStorage.setItem('token', token);
-            
             alert('¡Conexión exitosa! Bienvenido a AlkeWallet.');
-            console.log("Token guardado con éxito:", token);
-            
-            // 3. REDIRECCIÓN: Una vez que el usuario da "OK", lo mandamos al home
-            window.location.href = '/dashboard'; // O usa navigate('/dashboard') si tienes react-router
-            
+            window.location.href = '/dashboard'; 
         } catch (err) {
-            console.error("Error en el proceso de login:", err);
-            
-            // Manejo de errores basado en la respuesta del servidor
             if (err.response?.status === 403) {
-                setError('Acceso denegado (403). Intenta borrar la caché del navegador.');
+                setError('Acceso denegado (403). Intenta borrar la caché.');
             } else if (err.response?.status === 401) {
-                setError('Credenciales incorrectas. Revisa tu correo y contraseña.');
+                setError('Credenciales incorrectas.');
             } else {
-                setError('Error: Usuario no encontrado o el servidor de Render está despertando.');
+                setError('Error: El servidor de Render está despertando...');
             }
         }
     };
 
     return (
-        <div className="login-container">
-            <h2 style={{ letterSpacing: '2px' }}>ALKEWALLET</h2>
-            <p style={{ color: '#00f2ff', fontSize: '0.8rem', marginBottom: '20px', textTransform: 'uppercase' }}>
-                Secure Cloud Banking
-            </p>
-            
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '15px' }}>
-                    <input
-                        name="email"  // Cambiado a email para coincidir con la lógica del Backend
-                        type="email"
-                        placeholder="CORREO ELECTRÓNICO"
-                        className="neon-input"
-                        onChange={handleChange}
-                        required
-                    />
+        <div className="auth-page">
+            {/* 1. HEADER PRO */}
+            <header className="auth-header">
+                <div className="logo-container">
+                    <span className="logo-icon">⚡</span>
+                    <span className="logo-text">ALKEWALLET</span>
                 </div>
-                <div style={{ marginBottom: '15px' }}>
-                    <input
-                        name="password"
-                        type="password"
-                        placeholder="CONTRASEÑA"
-                        className="neon-input"
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                
-                <button type="submit" className="neon-button">
-                    INICIAR SESIÓN
-                </button>
-                <div style={{ marginTop: '20px', textAlign: 'center' }}>
-            <p style={{ color: '#8892b0' }}>
-                ¿No tienes cuenta? {' '}
-                <a 
-                    href="/register" 
-                    onClick={(e) => {
-                        e.preventDefault();
-                        window.location.href = '/register';
-                    }}
-                    style={{ color: '#38bdf8', textDecoration: 'none', fontWeight: 'bold' }}
-                >
-                    Regístrate aquí
-                </a>
-            </p>
-        </div>
-            </form>
+                <nav className="auth-nav">
+                    <a href="https://github.com/kevin30313" target="_blank" rel="noreferrer">GitHub</a>
+                </nav>
+            </header>
 
-            {error && (
-                <div style={{ 
-                    marginTop: '20px', 
-                    color: '#ff4d4d', 
-                    textShadow: '0 0 8px #ff4d4d',
-                    fontSize: '0.8rem',
-                    fontWeight: 'bold'
-                }}>
-                    {error}
+            <main className="auth-main">
+                {/* 2. LADO IZQUIERDO: TU ARTE DE TURTLE */}
+                <section className="auth-visual">
+                    <div className="turtle-art-container">
+                        {/* Aquí puedes poner una <img src={tuImagen} /> de tus diseños de Turtle */}
+                        <h2 className="visual-title">Finanzas con <br/><span>ADN Digital</span></h2>
+                        <p style={{color: '#8892b0', marginTop: '10px'}}>Inspirado en patrones geométricos de Python</p>
+                    </div>
+                </section>
+
+                {/* 3. LADO DERECHO: TU FORMULARIO LOGIK */}
+                <section className="auth-form-container">
+                    <div className="login-container">
+                        <h2 className="form-title">Iniciar Sesión</h2>
+                        <p className="form-subtitle">Secure Cloud Banking System</p>
+                        
+                        <form onSubmit={handleSubmit} className="auth-form">
+                            <input
+                                name="email"
+                                type="email"
+                                placeholder="CORREO ELECTRÓNICO"
+                                className="neon-input"
+                                onChange={handleChange}
+                                required
+                            />
+                            <input
+                                name="password"
+                                type="password"
+                                placeholder="CONTRASEÑA"
+                                className="neon-input"
+                                onChange={handleChange}
+                                required
+                            />
+                            
+                            <button type="submit" className="neon-button">
+                                INGRESAR
+                            </button>
+
+                            {error && <div className="error-message">{error}</div>}
+                        </form>
+
+                        <div className="auth-options">
+                            <p>¿No tienes cuenta? <a href="/register">Regístrate aquí</a></p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            {/* 4. FOOTER PRO */}
+            <footer className="auth-footer">
+                <p>© 2026 AlkeWallet | Desarrollado por Kevin Rojas | Cloud Engineering Student</p>
+                <div className="tech-badges">
+                    <span>Java</span><span>AWS</span><span>Docker</span><span>React</span>
                 </div>
-            )}
+            </footer>
         </div>
     );
 };
