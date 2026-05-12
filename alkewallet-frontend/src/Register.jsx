@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import api from './api'; // Usamos tu configuración de Axios para Render
+import { Link, useNavigate } from 'react-router-dom';
+import api from './api'; 
 import './App.css';
 
 const Register = () => {
@@ -10,6 +11,8 @@ const Register = () => {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    
+    const navigate = useNavigate(); // Hook para redirección suave
 
     const handleChange = (e) => {
         setFormData({
@@ -24,21 +27,21 @@ const Register = () => {
         setLoading(true);
 
         try {
-            // Enviamos los datos a tu endpoint /api/auth/register en Render
+            // Petición al backend en Render
             const response = await api.post('/auth/register', formData);
 
             console.log("Registro exitoso:", response.data);
             alert('¡Usuario creado con éxito! Ahora puedes iniciar sesión.');
             
-            // REDIRECCIÓN: Igual que en tu Login, lo mandamos a la entrada
-            window.location.href = '/login';
+            // Redirección al Login usando el router
+            navigate('/login');
         } catch (err) {
             console.error("Error en el proceso de registro:", err);
             
             if (err.response && err.response.status === 400) {
                 setError('El usuario o email ya existe, o los datos son inválidos.');
             } else {
-                setError('Hubo un problema al conectar con el servidor. Revisa los logs de Render.');
+                setError('Hubo un problema al conectar con el servidor.');
             }
         } finally {
             setLoading(false);
@@ -46,17 +49,24 @@ const Register = () => {
     };
 
     return (
-        <div className="auth-container">
-            <form className="auth-form" onSubmit={handleSubmit}>
+        <div className="login-container"> {/* Usando tu clase de App.css */}
+            <form onSubmit={handleSubmit}>
                 <h2 className="title">ALKEWALLET</h2>
-                <p className="subtitle">CREAR NUEVA CUENTA</p>
+                <p className="subtitle" style={{ color: 'var(--text-dim)', marginBottom: '1.5rem' }}>
+                    CREAR NUEVA CUENTA
+                </p>
 
-                {error && <p className="error-message" style={{ color: 'red' }}>{error}</p>}
+                {error && (
+                    <p className="error-message" style={{ color: '#ff4d4d', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                        {error}
+                    </p>
+                )}
 
                 <div className="input-group">
                     <input
                         type="text"
                         name="username"
+                        className="neon-input"
                         placeholder="Nombre de usuario"
                         value={formData.username}
                         onChange={handleChange}
@@ -68,6 +78,7 @@ const Register = () => {
                     <input
                         type="email"
                         name="email"
+                        className="neon-input"
                         placeholder="Correo electrónico"
                         value={formData.email}
                         onChange={handleChange}
@@ -79,6 +90,7 @@ const Register = () => {
                     <input
                         type="password"
                         name="password"
+                        className="neon-input"
                         placeholder="Contraseña"
                         value={formData.password}
                         onChange={handleChange}
@@ -86,12 +98,14 @@ const Register = () => {
                     />
                 </div>
 
-                <button type="submit" className="login-button" disabled={loading}>
+                <button type="submit" className="neon-button" disabled={loading}>
                     {loading ? 'REGISTRANDO...' : 'REGISTRARSE'}
                 </button>
 
-                <div className="auth-links">
-                    <a href="/login">¿Ya tienes cuenta? Inicia sesión aquí</a>
+                <div style={{ marginTop: '1.5rem' }}>
+                    <Link to="/login" style={{ color: 'var(--neon-blue)', textDecoration: 'none', fontSize: '0.9rem' }}>
+                        ¿Ya tienes cuenta? Inicia sesión aquí
+                    </Link>
                 </div>
             </form>
         </div>
