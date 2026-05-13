@@ -6,53 +6,54 @@ const TurtleCanvas = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    
-    // Ajustar tamaño al contenedor
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    let animationFrameId;
 
-    const nodos = [];
-    const numNodos = 12;
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    window.addEventListener('resize', resize);
+    resize();
 
-    // 1. Equivalente a tu bucle for i in range(10)
-    for (let i = 0; i < numNodos; i++) {
-      nodos.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        color: `hsl(${(i / numNodos) * 360}, 100%, 50%)` // Colores dinámicos
-      });
-    }
+    let offset = 0;
 
-    const draw = () => {
+    const drawGrid = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const size = 50; // Tamaño de los cubos
+      ctx.setLineDash([5, 15]); // Líneas punteadas para un look más técnico
+      ctx.lineWidth = 1;
+      
+      offset += 0.2; // Velocidad del movimiento
 
-      // 2. Dibujar conexiones (for i in range(len(nodos))...)
-      nodos.forEach((nodoA, i) => {
-        nodos.slice(i + 1).forEach((nodoB, j) => {
+      for (let x = -size; x < canvas.width + size; x += size) {
+        for (let y = -size; y < canvas.height + size; y += size) {
+          // Color azul neón muy suave para no opacar el texto
+          ctx.strokeStyle = `rgba(0, 242, 255, ${0.1 + Math.sin((x + y + offset) * 0.05) * 0.05})`;
+          
           ctx.beginPath();
-          ctx.moveTo(nodoA.x, nodoA.y);
-          ctx.lineTo(nodoB.x, nodoB.y);
-          ctx.strokeStyle = `hsla(${(i + j) * 15}, 100%, 50%, 0.2)`;
-          ctx.lineWidth = 1;
+          // Dibujo de rombos isométricos
+          ctx.moveTo(x + (offset % size), y);
+          ctx.lineTo(x + size / 2 + (offset % size), y + size / 2);
+          ctx.lineTo(x + (offset % size), y + size);
+          ctx.lineTo(x - size / 2 + (offset % size), y + size / 2);
+          ctx.closePath();
           ctx.stroke();
-        });
-      });
+        }
+      }
 
-      // 3. Dibujar nodos (dibujar_nodo)
-      nodos.forEach(nodo => {
-        ctx.beginPath();
-        ctx.arc(nodo.x, nodo.y, 6, 0, Math.PI * 2);
-        ctx.fillStyle = nodo.color;
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = nodo.color;
-        ctx.fill();
-      });
+      animationFrameId = requestAnimationFrame(drawGrid);
     };
 
-    draw();
+    drawGrid();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', resize);
+    };
   }, []);
 
-  return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />;
+  return <canvas ref={canvasRef} style={{ width: '100%', height: '100%', opacity: 0.6 }} />;
 };
 
 export default TurtleCanvas;

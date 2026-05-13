@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import api from './api'; 
 import './App.css';
-import TurtleCanvas from './TurtleCanvas'; // Importación correcta
+import TurtleCanvas from './TurtleCanvas';
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -19,7 +19,6 @@ const Login = () => {
         try {
             const response = await api.post('/auth/login', credentials);
             const token = response.data; 
-            
             localStorage.setItem('token', token);
             alert('¡Conexión exitosa! Bienvenido a AlkeWallet.');
             window.location.href = '/dashboard'; 
@@ -49,26 +48,33 @@ const Login = () => {
             </header>
 
             <main className="auth-main">
-                {/* 2. LADO IZQUIERDO: ARTE GEOMÉTRICO (TURTLE) */}
-                <section className="auth-visual">
-                    <div className="turtle-art-container" style={{ position: 'relative', width: '100%', height: '100%' }}>
-                        {/* SE AGREGA EL COMPONENTE AQUÍ PARA QUE DIBUJE LA RED */}
-                        <TurtleCanvas /> 
-                        
-                        <div style={{ position: 'absolute', zIndex: 2, pointerEvents: 'none' }}>
-                            <h2 className="visual-title">Finanzas con <br/><span>ADN Digital</span></h2>
-                            <p style={{color: '#8892b0', marginTop: '10px', fontWeight: '300'}}>
-                                Inspirado en patrones geométricos de Python
-                            </p>
-                        </div>
+                {/* SECCIÓN VISUAL MEJORADA */}
+                <section className="auth-visual" style={{ position: 'relative', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    
+                    {/* El Canvas ahora es un fondo absoluto para no estorbar al texto */}
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}>
+                        <TurtleCanvas />
+                    </div>
+
+                    {/* Contenedor de texto con un leve difuminado detrás para legibilidad absoluta */}
+                    <div style={{ 
+                        position: 'relative', 
+                        zIndex: 2, 
+                        textAlign: 'center', 
+                        padding: '2rem',
+                        background: 'radial-gradient(circle, rgba(11,13,14,0.8) 0%, rgba(11,13,14,0) 80%)' 
+                    }}>
+                        <h2 className="visual-title">Finanzas con <br/><span>ADN Digital</span></h2>
+                        <p style={{ color: '#8892b0', marginTop: '15px', fontWeight: '300', letterSpacing: '1px', textTransform: 'uppercase', fontSize: '0.8rem' }}>
+                            Infraestructura Cloud Segura
+                        </p>
                     </div>
                 </section>
 
-                {/* 3. LADO DERECHO: FORMULARIO */}
                 <section className="auth-form-container">
                     <div className="login-container">
                         <h2 className="form-title">Iniciar Sesión</h2>
-                        <p className="form-subtitle">Secure Cloud Banking System</p>
+                        <p className="form-subtitle">SECURE CLOUD BANKING SYSTEM</p>
                         
                         <form onSubmit={handleSubmit} className="auth-form">
                             <input
@@ -93,13 +99,13 @@ const Login = () => {
                             </button>
 
                             {error && (
-                                <div className="error-message" style={{ color: '#ff4d4d', marginTop: '15px', fontSize: '0.85rem' }}>
+                                <div className="error-message" style={{ color: '#ff4d4d', marginTop: '15px', fontSize: '0.85rem', textAlign: 'center' }}>
                                     {error}
                                 </div>
                             )}
                         </form>
 
-                        <div className="auth-options" style={{ marginTop: '20px' }}>
+                        <div className="auth-options" style={{ marginTop: '20px', textAlign: 'center' }}>
                             <p style={{ color: '#8b949e', fontSize: '0.9rem' }}>
                                 ¿No tienes cuenta? <a href="/register" style={{ color: 'var(--neon-blue)', textDecoration: 'none', fontWeight: '600' }}>Regístrate aquí</a>
                             </p>
