@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import api from './api'; 
 import './App.css';
+import TurtleCanvas from './TurtleCanvas'; // Importación correcta
 
 const Login = () => {
     const [credentials, setCredentials] = useState({ email: '', password: '' });
@@ -13,19 +14,14 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        // Limpieza de seguridad antes de iniciar nueva sesión
         localStorage.removeItem('token'); 
         
         try {
-            // Petición a tu API en Render
             const response = await api.post('/auth/login', credentials);
             const token = response.data; 
             
-            // Guardamos el JWT
             localStorage.setItem('token', token);
             alert('¡Conexión exitosa! Bienvenido a AlkeWallet.');
-            
-            // Redirección manual al dashboard
             window.location.href = '/dashboard'; 
         } catch (err) {
             if (err.response?.status === 403) {
@@ -40,7 +36,6 @@ const Login = () => {
 
     return (
         <div className="auth-page">
-            {/* 1. HEADER CON LOGO NEÓN */}
             <header className="auth-header">
                 <div className="logo-container">
                     <div className="logo-glow-wrapper">
@@ -56,15 +51,20 @@ const Login = () => {
             <main className="auth-main">
                 {/* 2. LADO IZQUIERDO: ARTE GEOMÉTRICO (TURTLE) */}
                 <section className="auth-visual">
-                    <div className="turtle-art-container">
-                        <h2 className="visual-title">Finanzas con <br/><span>ADN Digital</span></h2>
-                        <p style={{color: '#8892b0', marginTop: '10px', fontWeight: '300'}}>
-                            Inspirado en patrones geométricos de Python
-                        </p>
+                    <div className="turtle-art-container" style={{ position: 'relative', width: '100%', height: '100%' }}>
+                        {/* SE AGREGA EL COMPONENTE AQUÍ PARA QUE DIBUJE LA RED */}
+                        <TurtleCanvas /> 
+                        
+                        <div style={{ position: 'absolute', zIndex: 2, pointerEvents: 'none' }}>
+                            <h2 className="visual-title">Finanzas con <br/><span>ADN Digital</span></h2>
+                            <p style={{color: '#8892b0', marginTop: '10px', fontWeight: '300'}}>
+                                Inspirado en patrones geométricos de Python
+                            </p>
+                        </div>
                     </div>
                 </section>
 
-                {/* 3. LADO DERECHO: FORMULARIO DE ACCESO */}
+                {/* 3. LADO DERECHO: FORMULARIO */}
                 <section className="auth-form-container">
                     <div className="login-container">
                         <h2 className="form-title">Iniciar Sesión</h2>
@@ -108,14 +108,10 @@ const Login = () => {
                 </section>
             </main>
 
-            {/* 4. FOOTER CON STACK TECNOLÓGICO */}
             <footer className="auth-footer">
                 <p>© 2026 AlkeWallet | Desarrollado por Kevin Rojas | Cloud Engineering Student</p>
                 <div className="tech-badges" style={{ marginTop: '10px' }}>
-                    <span>Java</span>
-                    <span>AWS</span>
-                    <span>Docker</span>
-                    <span>React</span>
+                    <span>Java</span><span>AWS</span><span>Docker</span><span>React</span>
                 </div>
             </footer>
         </div>
