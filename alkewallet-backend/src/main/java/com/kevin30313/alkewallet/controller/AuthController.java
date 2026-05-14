@@ -48,4 +48,20 @@ public class AuthController {
                                  .body(Collections.singletonMap("error", "Credenciales inválidas o error de servidor"));
         }
     }
+    // Nuevo endpoint para obtener datos del usuario logueado
+    @GetMapping("/user")
+    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
+        try {
+            // El header viene como "Bearer token_valor", quitamos el prefijo
+            String token = authHeader.replace("Bearer ", "");
+            
+            // Llamamos a un nuevo método en tu AuthService
+            // Este método debe retornar un objeto con nombre, saldo y transacciones
+            return ResponseEntity.ok(authService.getUserProfile(token));
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                 .body(Collections.singletonMap("error", "Sesión expirada o inválida"));
+        }
+    }
 }

@@ -12,6 +12,7 @@ import com.kevin30313.alkewallet.dto.RegisterRequest;
 import com.kevin30313.alkewallet.model.User;
 import com.kevin30313.alkewallet.repository.UserRepository;
 
+
 @Service
 public class AuthService {
 
@@ -25,13 +26,15 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtService jwtService; // <--- Nueva inyección para generar tokens
+    private JwtService jwtService;
 
     public User register(RegisterRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        // Es buena idea setear un saldo inicial si la entidad lo permite
+        // user.setSaldo(0.0); 
         return userRepository.save(user);
     }
 
@@ -43,7 +46,15 @@ public class AuthService {
             )
         );
 
-        // EN VEZ DE UN TEXTO, DEVOLVEMOS EL TOKEN CIFRADO
+        // Generamos el token usando el nombre (email) autenticado
         return jwtService.generateToken(authentication.getName());
     }
+    public User getUserProfile(String token) {
+    // Cambiamos jwtUtil por jwtService
+    // Asegúrate de que en JwtService.java el método se llame extractUsername o extractEmail
+    String email = jwtService.extractUsername(token); 
+    
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+}
 }
