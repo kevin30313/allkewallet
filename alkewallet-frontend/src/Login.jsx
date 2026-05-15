@@ -18,11 +18,20 @@ const Login = () => {
         
         try {
             const response = await api.post('/auth/login', credentials);
-            const token = response.data; 
-            localStorage.setItem('token', token);
-            alert('¡Conexión exitosa! Bienvenido a AlkeWallet.');
-            window.location.href = '/dashboard'; 
+            
+            // CORRECCIÓN AQUÍ: Extraemos el string dentro de la propiedad 'token'
+            const tokenStr = response.data.token; 
+            
+            if (tokenStr) {
+                localStorage.setItem('token', tokenStr);
+                console.log("Token guardado exitosamente:", tokenStr); // Para comprobar en la consola
+                window.location.href = '/dashboard'; 
+            } else {
+                console.error("El backend no envió la propiedad 'token':", response.data);
+                setError('Error en la estructura de datos del servidor.');
+            }
         } catch (err) {
+            console.error("Error en login:", err.response || err);
             if (err.response?.status === 403) {
                 setError('Acceso denegado (403). Intenta borrar la caché o revisar el rol.');
             } else if (err.response?.status === 401) {
@@ -48,15 +57,11 @@ const Login = () => {
             </header>
 
             <main className="auth-main">
-                {/* SECCIÓN VISUAL MEJORADA */}
                 <section className="auth-visual" style={{ position: 'relative', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    
-                    {/* El Canvas ahora es un fondo absoluto para no estorbar al texto */}
                     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}>
                         <TurtleCanvas />
                     </div>
 
-                    {/* Contenedor de texto con un leve difuminado detrás para legibilidad absoluta */}
                     <div style={{ 
                         position: 'relative', 
                         zIndex: 2, 
