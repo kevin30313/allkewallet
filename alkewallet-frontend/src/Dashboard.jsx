@@ -6,27 +6,31 @@ import TurtleCanvas from './TurtleCanvas';
 const Dashboard = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null); // Nuevo estado para ver el error
 
     useEffect(() => {
         const loadDashboard = async () => {
             try {
                 const token = localStorage.getItem('token');
+                console.log("Token actual:", token); // DEBUG
+
                 if (!token) {
+                    console.log("No hay token, redirigiendo...");
                     window.location.href = '/login';
                     return;
                 }
 
-                // Llamada al endpoint real que acabas de subir al backend
                 const response = await api.get('/auth/user', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 
+                console.log("Respuesta Backend:", response.data); // DEBUG
                 setUserData(response.data);
             } catch (err) {
-                console.error("Error cargando dashboard", err);
-                // Si hay error de autenticación, limpiamos y redirigimos
-                localStorage.removeItem('token');
-                window.location.href = '/login';
+                console.error("Error detallado:", err.response || err);
+                setError("Error de autenticación o servidor");
+                // Comenta la línea de abajo temporalmente para ver el error en pantalla
+                // window.location.href = '/login'; 
             } finally {
                 setLoading(false);
             }
@@ -39,40 +43,36 @@ const Dashboard = () => {
         window.location.href = '/login';
     };
 
-    if (loading) return (
-        <div className="loading-screen">
-            <div className="loader"></div>
-            <p>Sincronizando con la red AlkeWallet...</p>
+    if (loading) return <div className="loading-screen">Sincronizando...</div>;
+    
+    // Si hay un error, lo mostramos para saber qué falló
+    if (error) return (
+        <div style={{color: 'white', textAlign: 'center', marginTop: '50px'}}>
+            <h2>{error}</h2>
+            <button onClick={handleLogout}>Volver al Login</button>
         </div>
     );
 
     return (
         <div className="dashboard-page">
-            {/* Fondo artístico con la tortuga */}
-            <div className="dashboard-bg-art">
-                <TurtleCanvas />
-            </div>
-
+            <div className="dashboard-bg-art"><TurtleCanvas /></div>
             <header className="dash-header">
                 <div className="dash-logo">
                     <span className="logo-icon">⚡</span>
                     <span className="logo-text">ALKE<span>WALLET</span></span>
                 </div>
                 <div className="user-profile-header">
-                    {/* Usamos el username o nombre que viene de la DB */}
                     <span className="user-name">Hola, {userData?.username || userData?.nombre || 'Usuario'}</span>
-                    <button onClick={handleLogout} className="logout-mini-btn">Cerrar Sesión</button>
+                    <button onClick={handleLogout} className="logout-mini-btn">Salir</button>
                 </div>
             </header>
 
             <main className="dash-content">
-                {/* Sección de Saldo Real */}
                 <section className="balance-section">
                     <div className="balance-card">
                         <div className="card-accent"></div>
                         <p className="label-dim">SALDO DISPONIBLE</p>
                         <h1 className="balance-amount">
-                            {/* Formato de moneda chilena: $1.234.567 */}
                             ${userData?.saldo ? userData.saldo.toLocaleString('es-CL') : '0'}
                         </h1>
                         <div className="dash-quick-actions">
@@ -82,27 +82,23 @@ const Dashboard = () => {
                     </div>
                 </section>
 
-                {/* Sección de Transacciones */}
                 <section className="transactions-section">
                     <h2 className="section-title">Movimientos Recientes</h2>
                     <div className="transactions-container">
-                        {userData?.transacciones && userData.transacciones.length > 0 ? (
-                            userData.transacciones.map((t, index) => (
-                                <div key={index} className="t-row">
+                        {userData?.transacciones?.length > 0 ? (
+                            userData.transacciones.map((t, i) => (
+                                <div key={i} className="t-row">
                                     <div className="t-info">
                                         <span className="t-desc">{t.descripcion}</span>
                                         <span className="t-date">{new Date(t.fecha).toLocaleDateString()}</span>
                                     </div>
-                                    <span className={`t-value ${t.tipo === 'EGRESO' ? 'negative' : 'positive'}`}>
-                                        {t.tipo === 'EGRESO' ? '-' : '+'}${t.monto.toLocaleString('es-CL')}
+                                    <span className={`t-value ${t.monto < 0 ? 'negative' : 'positive'}`}>
+                                        {t.monto < 0 ? '' : '+'}${t.monto.toLocaleString('es-CL')}
                                     </span>
                                 </div>
                             ))
                         ) : (
-                            <div className="no-data">
-                                <p>No hay movimientos registrados aún.</p>
-                                <button className="start-btn">Realiza tu primera operación</button>
-                            </div>
+                            <p className="no-data">No hay movimientos aún.</p>
                         )}
                     </div>
                 </section>
