@@ -1,4 +1,4 @@
-/* 1. LAYOUT CLARO */
+/* 1. LAYOUT CLARO (Tu base limpia) */
 .dashboard-page {
     background-color: #f0f2f5; /* Un gris muy suave tipo Facebook/LinkedIn */
     color: #111827; /* Gris casi negro (Slate 900) para texto marcado */
@@ -7,7 +7,7 @@
     font-family: 'Inter', sans-serif;
 }
 
-/* Arte de fondo tipo marca de agua */
+/* Arte de fondo tipo marca de agua con la tortuga */
 .dashboard-bg-art {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -28,13 +28,14 @@
     z-index: 10;
 }
 
-.dash-logo .logo-icon { font-size: 1.5rem; filter: drop-shadow(0 0 5px var(--neon-blue)); }
+.dash-logo .logo-icon { font-size: 1.5rem; filter: drop-shadow(0 0 5px #00f2ff); }
 .dash-logo .logo-text { color: #111827; font-weight: 800; letter-spacing: -1px; }
 .dash-logo .logo-text span { color: #007bff; /* Un azul más serio para modo claro */ }
 
-.user-name { font-weight: 600; margin-right: 15px; color: #374151; }
+.user-name { font-weight: 600; color: #374151; }
 
-.logout-btn {
+/* Sincronizado con tu JSX: .logout-mini-btn */
+.logout-mini-btn {
     background: transparent;
     border: 1px solid #d1d5db;
     padding: 6px 15px;
@@ -43,7 +44,7 @@
     cursor: pointer;
     transition: all 0.2s;
 }
-.logout-btn:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+.logout-mini-btn:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
 
 /* 3. CARDS Y CONTENIDO */
 .dash-content {
@@ -61,14 +62,18 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     border: 1px solid #ffffff;
     margin-bottom: 2rem;
+    position: relative;
 }
 
-.accent-bar {
-    width: 60px;
+/* Mapeado al .card-accent de tu JSX para el toque neón superior */
+.card-accent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 5px;
     background: #00f2ff; /* Tu toque neón */
-    margin-bottom: 1rem;
-    border-radius: 10px;
+    border-radius: 10px 10px 0 0;
 }
 
 .label-dim { color: #6b7280; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; }
@@ -80,8 +85,8 @@
     color: #000000;
 }
 
-/* 4. BOTONES DE ACCIÓN */
-.dash-actions { display: flex; gap: 15px; }
+/* 4. BOTONES DE ACCIÓN (.dash-quick-actions) */
+.dash-quick-actions { display: flex; gap: 15px; }
 .action-btn {
     padding: 12px 25px;
     border-radius: 8px;
@@ -91,13 +96,16 @@
     transition: transform 0.2s;
 }
 .action-btn:active { transform: scale(0.95); }
-.action-btn.primary { background: #111827; color: white; }
-.action-btn.secondary { background: #e5e7eb; color: #111827; }
+.action-btn.main { background: #111827; color: white; } /* Botón principal oscuro */
+.action-btn:not(.main) { background: #e5e7eb; color: #111827; }
 
 /* 5. TRANSACCIONES (MAX CONTRASTE) */
+.transactions-section { margin-top: 2rem; }
 .section-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 1.5rem; }
+.transactions-container { display: flex; flex-direction: column; }
 
-.transaction-item {
+/* Sincronizado con la fila de mapeo del JSX */
+.t-row {
     background: #ffffff;
     margin-bottom: 8px;
     padding: 1.2rem;
@@ -108,9 +116,17 @@
     border: 1px solid #e5e7eb;
 }
 
-.t-desc { display: block; font-weight: 700; color: #111827; font-size: 1rem; }
-.t-date { color: #6b7280; font-size: 0.8rem; }
+.t-info { display: flex; flex-direction: column; }
+.t-desc { font-weight: 700; color: #111827; font-size: 1rem; }
+.t-date { color: #6b7280; font-size: 0.8rem; margin-top: 2px; }
 
-.t-amount { font-weight: 800; font-size: 1.1rem; }
-.t-amount.income { color: #059669; /* Verde oscuro marcado */ }
-.t-amount.expense { color: #000000; } /* Gastos en negro fuerte */
+.t-value { font-weight: 800; font-size: 1.1rem; }
+.t-value.positive { color: #059669; /* Verde oscuro marcado */ }
+.t-value.negative { color: #000000; /* Gastos en negro fuerte */ }
+
+/* Estado sin transacciones */
+.no-data { text-align: center; color: #6b7280; padding: 2rem 0; }
+.start-btn {
+    background: #111827; color: white; border: none; 
+    padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; margin-top: 10px;
+}
