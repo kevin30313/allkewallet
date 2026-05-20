@@ -6,7 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import com.kevin30313.alkewallet.dto.LoginRequest;
 import com.kevin30313.alkewallet.dto.RegisterRequest;
 import com.kevin30313.alkewallet.model.User;
@@ -49,6 +49,7 @@ public class AuthService {
         // Generamos el token usando el nombre (email) autenticado
         return jwtService.generateToken(authentication.getName());
     }
+    @Transactional(readOnly = true)
     public User getUserProfile(String token) {
     // Cambiamos jwtUtil por jwtService
     // Asegúrate de que en JwtService.java el método se llame extractUsername o extractEmail
