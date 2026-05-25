@@ -1,6 +1,7 @@
 package com.kevin30313.alkewallet.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.kevin30313.alkewallet.dto.LoginRequest;
 import com.kevin30313.alkewallet.dto.RegisterRequest;
+import com.kevin30313.alkewallet.dto.UserResponseDTO;
+import com.kevin30313.alkewallet.exception.AccountServiceException;
 import com.kevin30313.alkewallet.model.User;
 import com.kevin30313.alkewallet.repository.UserRepository;
 
@@ -32,30 +35,39 @@ public class AuthService {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
-    public User register(RegisterRequest request) {
+    // 1. Inyectamos la URL desde application.properties (Inversión de Dependencias)
+    @Value("${app.services.account.url}")
+    private String accountServiceUrl;
+
+    /**
+     * Registra un usuario y retorna un DTO seguro sin exponer datos sensibles.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public UserResponseDTO register(RegisterRequest request) {
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         
-        // 1. Guardamos el usuario en 'alkewallet_auth_db'
+        // Persistencia local
         User savedUser = userRepository.save(user);
 
-        // 2. ¡EL PUENTE! Llamada sincrónica para crear la billetera en el account-service
+        // 2. Comunicación remota usando la variable inyectada
         try {
             webClientBuilder.build()
                 .post()
-                // Apuntamos al puerto local 8081 que usará el servicio de cuentas
-                .uri("http://localhost:8081/api/accounts/internal/create?userId=" + savedUser.getId())
+                .uri(accountServiceUrl + "/api/accounts/internal/create?userId=" + savedUser.getId())
                 .retrieve()
                 .toBodilessEntity()
-                .block(); // .block() congela el hilo un milisegundo esperando la respuesta del otro microservicio
+                .block(); 
+                
         } catch (Exception e) {
-            // Si el servicio de cuentas falla o está caído, lanzamos excepción para hacer rollback si fuera necesario
-            throw new RuntimeException("Error crítico: No se pudo inicializar la billetera digital del usuario. " + e.getMessage());
+            // 3. Lanzamos nuestra excepción personalizada para activar el Rollback
+            throw new AccountServiceException("No se pudo inicializar la billetera en account-service: " + e.getMessage());
         }
 
-        return savedUser;
+        // 4. Mapeo a DTO de salida (Nunca retornamos la entidad pura al controlador)
+        return new UserResponseDTO(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail());
     }
 
     public String login(LoginRequest request) {
@@ -65,16 +77,12 @@ public class AuthService {
                 request.getPassword().trim()
             )
         );
-
-        // Generamos el token usando el nombre (email) autenticado
         return jwtService.generateToken(authentication.getName());
     }
 
     @Transactional(readOnly = true)
     public User getUserProfile(String token) {
-        // Asegúrate de que en JwtService.java el método se llame extractUsername
         String email = jwtService.extractUsername(token); 
-        
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }

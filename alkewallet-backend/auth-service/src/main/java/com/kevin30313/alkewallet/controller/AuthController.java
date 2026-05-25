@@ -3,16 +3,19 @@ package com.kevin30313.alkewallet.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.kevin30313.alkewallet.dto.LoginRequest; 
+import com.kevin30313.alkewallet.dto.LoginRequest;
 import com.kevin30313.alkewallet.dto.RegisterRequest;
+import com.kevin30313.alkewallet.dto.UserResponseDTO;
+import com.kevin30313.alkewallet.model.User;
 import com.kevin30313.alkewallet.service.AuthService;
 
-import java.util.Collections;
-import java.util.Map;
-
-@CrossOrigin(origins = "https://alkewallet-frontend.onrender.com") 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -20,48 +23,42 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    /**
+     * Endpoint para registrar un nuevo usuario en la plataforma.
+     * Recibe los datos en un RegisterRequest y responde con un DTO seguro (UserResponseDTO).
+     * Retorna HTTP 201 Created si la persistencia y el account-service fueron exitosos.
+     */
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        try {
-            // Es buena práctica devolver 201 Created para registros exitosos
-            return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
-        }
+    public ResponseEntity<UserResponseDTO> register(@RequestBody RegisterRequest request) {
+        // El servicio maneja la lógica interna y la comunicación sincrónica por red
+        UserResponseDTO response = authService.register(request);
+        
+        // Estándar REST: Al crear un recurso con éxito se responde con un estado 201
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * Endpoint para iniciar sesión.
+     * Autentica las credenciales y devuelve el token JWT generado para el cliente.
+     */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        try {
-            System.out.println("DEBUG: Intento de login para: " + request.getEmail());
-            String token = authService.login(request);
-            
-            // IMPORTANTE: Devolvemos un JSON { "token": "valor..." } 
-            // Esto evita problemas de parseo en el Frontend
-            return ResponseEntity.ok(Collections.singletonMap("token", token));
-            
-        } catch (Exception e) {
-            e.printStackTrace(); 
-            // Enviamos un JSON incluso en el error para mantener la consistencia
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                 .body(Collections.singletonMap("error", "Credenciales inválidas o error de servidor"));
-        }
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+        String token = authService.login(request);
+        return ResponseEntity.ok(token);
     }
-    // Nuevo endpoint para obtener datos del usuario logueado
-    @GetMapping("/user")
-    public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
-        try {
-            // El header viene como "Bearer token_valor", quitamos el prefijo
-            String token = authHeader.replace("Bearer ", "");
-            
-            // Llamamos a un nuevo método en tu AuthService
-            // Este método debe retornar un objeto con nombre, saldo y transacciones
-            return ResponseEntity.ok(authService.getUserProfile(token));
-            
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                 .body(Collections.singletonMap("error", "Sesión expirada o inválida"));
+
+    /**
+     * Endpoint para obtener el perfil del usuario autenticado.
+     * Lee el token enviado en la cabecera 'Authorization' para extraer los datos seguros.
+     */
+    @GetMapping("/me")
+    public ResponseEntity<User> getUserProfile(@RequestHeader("Authorization") String token) {
+        // Si el token viene con el prefijo "Bearer ", se lo removemos para procesarlo limpio
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
         }
+        
+        User userProfile = authService.getUserProfile(token);
+        return ResponseEntity.ok(userProfile);
     }
 }
