@@ -56,7 +56,7 @@ public class AuthService {
         try {
             webClientBuilder.build()
                 .post()
-                .uri(accountServiceUrl + "/api/accounts/internal/create?userId=" + savedUser.getId())
+                .uri(accountServiceUrl + "/api/internal/accounts/create?userId=" + savedUser.getId())
                 .retrieve()
                 .toBodilessEntity()
                 .block(); 

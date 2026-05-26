@@ -10,7 +10,7 @@ import com.kevin30313.alkewallet.model.Account;
 import com.kevin30313.alkewallet.service.AccountService;
 
 @RestController
-@RequestMapping("/api/accounts/internal")
+@RequestMapping("/api/internal/accounts")
 public class AccountInternalController {
 
     @Autowired
