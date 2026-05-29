@@ -16,7 +16,7 @@ public class JwtService {
 
     // IMPORTANTE: Esta llave debe ser secreta y tener al menos 32 caracteres.
     // Al dejarla fija, los tokens no fallarán cuando Render reinicie el servidor.
-    private static final String SECRET_STRING = "EstaEsMiLlaveSecretaSuperLargaYSeguraParaAlkeWallet2026";
+    private static final String SECRET_STRING = "XGHAlEE$4k79fjfjxllejhhggoisnn#$457680&";
 
     // Genera la llave de firma a partir del String anterior
     private Key getSigningKey() {

@@ -25,39 +25,55 @@ public class AuthController {
 
     /**
      * Endpoint para registrar un nuevo usuario en la plataforma.
-     * Recibe los datos en un RegisterRequest y responde con un DTO seguro (UserResponseDTO).
-     * Retorna HTTP 201 Created si la persistencia y el account-service fueron exitosos.
+     * Modificado temporalmente para interceptar errores de transacción en consola y Postman.
      */
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> register(@RequestBody RegisterRequest request) {
-        // El servicio maneja la lógica interna y la comunicación sincrónica por red
-        UserResponseDTO response = authService.register(request);
-        
-        // Estándar REST: Al crear un recurso con éxito se responde con un estado 201
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        try {
+            UserResponseDTO response = authService.register(request);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.out.println("\n==================================================");
+            System.out.println("❌ ERROR DETECTADO EN EL PROCESO DE REGISTRO:");
+            System.out.println("Mensaje: " + e.getMessage());
+            System.out.println("==================================================\n");
+            e.printStackTrace(); // Esto pintará el causante real arriba del stack trace anterior
+            
+            // Le devolvemos el error a Postman para romper el velo del 403
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error en backend: " + e.getMessage());
+        }
     }
 
     /**
      * Endpoint para iniciar sesión.
-     * Autentica las credenciales y devuelve el token JWT generado para el cliente.
+     * Modificado temporalmente para interceptar errores ocultos de autenticación.
      */
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        String token = authService.login(request);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            String token = authService.login(request);
+            return ResponseEntity.ok(token);
+        } catch (Exception e) {
+            System.out.println("\n==================================================");
+            System.out.println("❌ ERROR DETECTADO EN EL PROCESO DE LOGIN:");
+            System.out.println("Mensaje: " + e.getMessage());
+            System.out.println("==================================================\n");
+            e.printStackTrace();
+            
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Error en login: " + e.getMessage());
+        }
     }
 
     /**
      * Endpoint para obtener el perfil del usuario autenticado.
-     * Lee el token enviado en la cabecera 'Authorization' para extraer los datos seguros.
      */
     @GetMapping("/me")
     public ResponseEntity<User> getUserProfile(@RequestHeader("Authorization") String token) {
-        // Si el token viene con el prefijo "Bearer ", se lo removemos para procesarlo limpio
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
-        
         User userProfile = authService.getUserProfile(token);
         return ResponseEntity.ok(userProfile);
     }

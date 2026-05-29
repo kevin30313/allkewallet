@@ -12,20 +12,21 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            // Deshabilitamos CSRF usando la sintaxis recomendada para Spring Boot 3.x
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                // 1. Rutas internas: paso libre temporal para comunicación entre microservicios
-                .requestMatchers("/api/accounts/internal/**").permitAll()
-                
-                // 2. Rutas del cliente (Como ver saldo): Requieren autenticación estricta
-                .requestMatchers("/api/accounts/user/**").authenticated()
-                
-                // 3. Cualquier otra petición debe estar firmada
-                .anyRequest().authenticated()
+   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        // Deshabilitamos CSRF usando la sintaxis recomendada para Spring Boot 3.x
+        .csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(auth -> auth
+            // 1. Rutas internas: Corregido el orden para que haga match perfecto con /api/internal/accounts/...
+            .requestMatchers("/api/internal/**").permitAll()
+            
+            // 2. Rutas del cliente (Como ver saldo): Requieren autenticación estricta
+            .requestMatchers("/api/accounts/user/**").authenticated()
+            
+            // 3. Cualquier otra petición debe estar firmada
+            .anyRequest().authenticated()
             );
+            
             
 
         return http.build();

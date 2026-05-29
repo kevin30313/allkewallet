@@ -1,7 +1,7 @@
 package com.kevin30313.alkewallet.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,15 +33,8 @@ public class AuthService {
     private JwtService jwtService;
 
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    private WebClient accountWebClient;
 
-    // 1. Inyectamos la URL desde application.properties (Inversión de Dependencias)
-    @Value("${app.services.account.url}")
-    private String accountServiceUrl;
-
-    /**
-     * Registra un usuario y retorna un DTO seguro sin exponer datos sensibles.
-     */
     @Transactional(rollbackFor = Exception.class)
     public UserResponseDTO register(RegisterRequest request) {
         User user = new User();
@@ -49,24 +42,19 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         
-        // Persistencia local
         User savedUser = userRepository.save(user);
 
-        // 2. Comunicación remota usando la variable inyectada
         try {
-            webClientBuilder.build()
-                .post()
-                .uri(accountServiceUrl + "/api/internal/accounts/create?userId=" + savedUser.getId())
+            accountWebClient.post()
+                .uri("/api/internal/accounts/create?userId=" + savedUser.getId())
                 .retrieve()
                 .toBodilessEntity()
                 .block(); 
                 
         } catch (Exception e) {
-            // 3. Lanzamos nuestra excepción personalizada para activar el Rollback
             throw new AccountServiceException("No se pudo inicializar la billetera en account-service: " + e.getMessage());
         }
 
-        // 4. Mapeo a DTO de salida (Nunca retornamos la entidad pura al controlador)
         return new UserResponseDTO(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail());
     }
 
