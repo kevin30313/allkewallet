@@ -5,8 +5,8 @@ WORKDIR /app
 # Copiar el archivo de configuración de dependencias
 COPY pom.xml .
 
-# Descargar las dependencias para cachearlas y acelerar futuros builds
-RUN mvn dependency:go-offline -B
+# Descargar las dependencias para cachearlas y acelerar futuros builds (omitiendo tests)
+RUN mvn dependency:go-offline -B -Dmaven.test.skip=true
 
 # Copiar el código fuente del microservicio
 COPY src ./src
