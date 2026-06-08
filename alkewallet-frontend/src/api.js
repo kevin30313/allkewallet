@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
     // Corregido el texto duplicado de la URL
-    baseURL: 'https://account-service-1041045148793.us-central1.run.app',
+   "baseURL": "https://account-service-1041045148793.us-central1.run.app"
 });
 
 // Este "Interceptor" es como un guardia de seguridad: 
