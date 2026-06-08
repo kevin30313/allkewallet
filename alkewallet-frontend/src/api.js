@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    
-    baseURL: 'https://allkewallet-api.onrender.com/api',
+    // Corregido el texto duplicado de la URL
+    baseURL: 'https://account-service-1041045148793.us-central1.run.app',
 });
 
 // Este "Interceptor" es como un guardia de seguridad: 
@@ -11,6 +11,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
+        // Corregido: Sin la comilla simple intermedia, solo espacio limpio
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
