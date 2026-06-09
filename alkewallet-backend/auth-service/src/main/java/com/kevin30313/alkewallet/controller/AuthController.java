@@ -3,6 +3,7 @@ package com.kevin30313.alkewallet.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin; // <-- Importación necesaria
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import com.kevin30313.alkewallet.dto.UserResponseDTO;
 import com.kevin30313.alkewallet.model.User;
 import com.kevin30313.alkewallet.service.AuthService;
 
+@CrossOrigin(origins = "https://alkewallet-frontend-1041045148793.us-central1.run.app") // <-- Permiso explícito para tu front de GCP
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
