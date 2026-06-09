@@ -21,8 +21,8 @@ WORKDIR /app
 # Copiar el archivo JAR generado desde la etapa de construcción
 COPY --from=build /app/target/*.jar app.jar
 
-# Exponer el puerto en el que corre el servicio (auth-service usa el 8081)
-EXPOSE 8081
+# Exponer el puerto dinámico de Cloud Run (dejamos 8080 por compatibilidad por defecto)
+EXPOSE 8080
 
-# Comando definitivo para arrancar la aplicación en Cloud Run
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Comando definitivo pasándole la variable PORT de Google a la máquina virtual de Java
+ENTRYPOINT ["java", "-Dserver.port=${PORT:8080}", "-jar", "app.jar"]
