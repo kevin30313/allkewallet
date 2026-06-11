@@ -1,0 +1,15 @@
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/dto/UserResponseDTO.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/model/User.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/service/JwtService.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/repository/UserRepository.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/dto/RegisterRequest.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/exception/AccountServiceException.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/dto/LoginRequest.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/service/AuthService.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/config/SecurityConfig.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/HomeController.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/config/JwtAuthenticationFilter.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/AlkewalletApplication.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/controller/AuthController.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/service/UserDetailsServiceImpl.java
+/home/writfkhistorik/allkewallet/alkewallet-backend/auth-service/src/main/java/com/kevin30313/alkewallet/config/WebClientConfig.java
