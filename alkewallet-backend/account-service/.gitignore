@@ -1,0 +1,9 @@
+# Archivos de configuración con secretos
+application.properties
+# Si tienes perfiles específicos, ignóralos también
+application-*.properties
+
+# Carpetas de construcción
+target/
+.gradle/
+build/

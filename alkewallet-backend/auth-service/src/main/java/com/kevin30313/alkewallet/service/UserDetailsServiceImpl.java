@@ -25,10 +25,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
 
         // 2. Construimos y retornamos el User oficial de Spring Security.
-        // Usamos .trim() en los datos que vienen de la DB para asegurar que BCrypt no falle por espacios invisibles.
+        // No usamos .trim() en la contraseña de la DB a menos que sea estrictamente necesario (ej. columna CHAR)
         return User.builder()
                 .username(user.getEmail().trim())
-                .password(user.getPassword().trim())
+                .password(user.getPassword())
                 .authorities(new ArrayList<>()) // Aquí puedes mapear roles en el futuro
                 .build();
     }

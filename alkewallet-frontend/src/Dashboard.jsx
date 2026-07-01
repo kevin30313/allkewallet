@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from './api'; 
+import { authApi as api } from "./api";
 import './Dashboard.css';
 import TurtleCanvas from './TurtleCanvas';
 

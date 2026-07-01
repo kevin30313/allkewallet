@@ -14,4 +14,5 @@ COPY --from=build /app/target/*.jar app.jar
 # Cloud Run inyecta la variable $PORT. Por defecto usaremos 8080
 ENV PORT=8080
 EXPOSE 8080
-ENTRYPOINT ["java", "-Dserver.port=${PORT}", "-jar", "app.jar"]
+# Agregamos parámetros de memoria para optimizar el uso de recursos en contenedores (Cloud Run)
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-XX:InitialRAMPercentage=50.0", "-Dserver.port=${PORT}", "-jar", "app.jar"]

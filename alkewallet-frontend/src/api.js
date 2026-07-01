@@ -1,20 +1,31 @@
-import axios from 'axios';
+import axios from "axios";
 
-const api = axios.create({
-    // Corregido el texto duplicado de la URL
-   "baseURL": "https://account-service-1041045148793.us-central1.run.app"
+// 1. Instancia exclusiva para el Servicio de Autenticación (auth-service)
+export const authApi = axios.create({
+  baseURL: "https://auth-service-1041045148793.us-central1.run.app/api",
+  headers: {
+    "Content-Type": "application/json",
+  }
 });
 
-// Este "Interceptor" es como un guardia de seguridad: 
-// Antes de cada petición, revisa si tienes un token en el navegador
-// y lo pega automáticamente en el header de Authorization.
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
+// 2. Instancia exclusiva para el Servicio de Cuentas y Saldos (account-service)
+export const accountApi = axios.create({
+  baseURL: "https://account-service-1041045148793.us-central1.run.app/api", // <-- Asegúrate de que esta sea la URL real de tu Cloud Run para accounts
+  headers: {
+    "Content-Type": "application/json",
+  }
+});
+
+// Opcional: Interceptor automático para adjuntar el token JWT en accountApi
+accountApi.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token"); // O como estés guardando el JWT en tu front
     if (token) {
-        // Corregido: Sin la comilla simple intermedia, solo espacio limpio
-        config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
-});
-
-export default api;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);

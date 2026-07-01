@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import api from './api'; 
+import { authApi } from './api'; 
 import './App.css';
 
 const Register = () => {
@@ -27,8 +27,8 @@ const Register = () => {
         setLoading(true);
 
         try {
-            // Petición al backend en Render
-            const response = await api.post('/auth/register', formData);
+            // Usamos authApi para apuntar a la base con /api y el endpoint /auth/register
+            const response = await authApi.post('/auth/register', formData);
 
             console.log("Registro exitoso:", response.data);
             alert('¡Usuario creado con éxito! Ahora puedes iniciar sesión.');

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import api from './api'; 
+import { authApi as api } from "./api"; // Importamos 'authApi' y le ponemos el alias 'api'
 import './App.css';
 import TurtleCanvas from './TurtleCanvas';
 
@@ -20,16 +20,18 @@ const Login = () => {
             const response = await api.post('/auth/login', credentials);
             
             // CORRECCIÓN AQUÍ: Extraemos el string dentro de la propiedad 'token'
-            const tokenStr = response.data.token; 
-            
-            if (tokenStr) {
-                localStorage.setItem('token', tokenStr);
-                console.log("Token guardado exitosamente:", tokenStr); // Para comprobar en la consola
-                window.location.href = '/dashboard'; 
-            } else {
-                console.error("El backend no envió la propiedad 'token':", response.data);
-                setError('Error en la estructura de datos del servidor.');
-            }
+          const tokenStr = response.data; 
+    
+        if (tokenStr) {
+        localStorage.setItem('token', tokenStr);
+        console.log("Token guardado exitosamente:", tokenStr);
+        window.location.href = '/dashboard'; 
+    }   
+        else {
+        console.error("No se recibió un token válido:", response.data);
+        setError('Error en la estructura de datos del servidor.');
+    }
+}
         } catch (err) {
             console.error("Error en login:", err.response || err);
             if (err.response?.status === 403) {
@@ -37,7 +39,7 @@ const Login = () => {
             } else if (err.response?.status === 401) {
                 setError('Credenciales incorrectas. Verifica tu correo y contraseña.');
             } else {
-                setError('Error: El servidor de Render está despertando. Reintenta en unos segundos.');
+                setError('Error: El servidor  está despertando. Reintenta en unos segundos.');
             }
         }
     };

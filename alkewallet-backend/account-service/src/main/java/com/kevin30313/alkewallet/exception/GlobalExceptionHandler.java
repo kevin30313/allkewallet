@@ -24,12 +24,13 @@ public class GlobalExceptionHandler {
         body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("error", "Saldo Insuficiente");
         body.put("message", ex.getMessage());
-        
+
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     /**
-     * Captura errores de validación de negocio (ej: montos menores o iguales a cero, auto-transferencias).
+     * Captura errores de validación de negocio (ej: montos menores o iguales a
+     * cero, auto-transferencias).
      * Retorna un HTTP 400 Bad Request.
      */
     @ExceptionHandler(IllegalArgumentException.class)
@@ -39,7 +40,7 @@ public class GlobalExceptionHandler {
         body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("error", "Petición Incorrecta");
         body.put("message", ex.getMessage());
-        
+
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -54,8 +55,7 @@ public class GlobalExceptionHandler {
         body.put("status", HttpStatus.NOT_FOUND.value());
         body.put("error", "Recurso No Encontrado");
         body.put("message", ex.getMessage());
-        
+
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 }
-

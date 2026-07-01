@@ -25,4 +25,5 @@ COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
 
 # Comando definitivo pasándole la variable PORT de Google a la máquina virtual de Java
-ENTRYPOINT ["java", "-Dserver.port=${PORT:8080}", "-jar", "app.jar"]
+# Agregamos parámetros de memoria para optimizar el uso de recursos en contenedores (Cloud Run)
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-XX:InitialRAMPercentage=50.0", "-Dserver.port=${PORT:8080}", "-jar", "app.jar"]
