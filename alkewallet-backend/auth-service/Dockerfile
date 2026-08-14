@@ -1,29 +1,18 @@
-# --- Etapa 1: Construcción (Build) ---
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS build
+# Etapa 1: Construcción
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
-
-# Copiar el archivo de configuración de dependencias
+# Copiamos solo el pom.xml y el src de este servicio
 COPY pom.xml .
-
-# Descargar las dependencias para cachearlas y acelerar futuros builds
-RUN mvn dependency:go-offline -B
-
-# Copiar el código fuente del microservicio
 COPY src ./src
-
-# Compilar y empaquetar el JAR saltándose los tests para agilizar
+# Compilamos
 RUN mvn clean package -DskipTests
 
-# --- Etapa 2: Imagen de Ejecución (Runtime) ---
+# Etapa 2: Ejecución
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-
-# Copiar el archivo JAR generado desde la etapa de construcción
+# Copiamos el JAR generado desde la etapa de construcción
 COPY --from=build /app/target/*.jar app.jar
 
-# Exponer el puerto dinámico de Cloud Run (dejamos 8080 por compatibilidad por defecto)
-EXPOSE 8080
-
-# Comando definitivo pasándole la variable PORT de Google a la máquina virtual de Java
-# Agregamos parámetros de memoria para optimizar el uso de recursos en contenedores (Cloud Run)
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-XX:InitialRAMPercentage=50.0", "-Dserver.port=${PORT:8080}", "-jar", "app.jar"]
+# Cloud Run inyecta la variable $PORT automáticamente
+# Usamos -Dserver.port=$PORT para que Spring sepa en qué puerto escuchar
+ENTRYPOINT ["java", "-Dserver.port=${PORT}", "-jar", "app.jar"]

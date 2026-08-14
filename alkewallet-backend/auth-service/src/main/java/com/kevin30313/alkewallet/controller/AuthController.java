@@ -20,36 +20,29 @@ import com.kevin30313.alkewallet.service.AuthService;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
-    /**
-     * Endpoint para registrar un nuevo usuario en la plataforma.
-     */
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@RequestBody RegisterRequest request) {
         UserResponseDTO response = authService.register(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    /**
-     * Endpoint para iniciar sesión.
-     */
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
         String token = authService.login(request);
         return ResponseEntity.ok(token);
     }
 
-    /**
-     * Endpoint para obtener el perfil del usuario autenticado.
-     */
     @GetMapping("/me")
     public ResponseEntity<User> getUserProfile(@RequestHeader("Authorization") String token) {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
-        User userProfile = authService.getUserProfile(token);
-        return ResponseEntity.ok(userProfile);
+        return ResponseEntity.ok(authService.getUserProfile(token));
     }
 }

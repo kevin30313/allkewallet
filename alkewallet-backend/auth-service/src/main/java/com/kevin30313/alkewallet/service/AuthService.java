@@ -1,6 +1,5 @@
 package com.kevin30313.alkewallet.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,61 +16,57 @@ import com.kevin30313.alkewallet.repository.UserRepository;
 @Service
 public class AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final AccountServiceClient accountServiceClient;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private AccountServiceClient accountServiceClient;
+    public AuthService(UserRepository userRepository, 
+                       PasswordEncoder passwordEncoder, 
+                       AuthenticationManager authenticationManager, 
+                       JwtService jwtService, 
+                       AccountServiceClient accountServiceClient) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+        this.accountServiceClient = accountServiceClient;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public UserResponseDTO register(RegisterRequest request) {
-        // 1. Validaciones previas con trim() para evitar duplicados por espacios
-        String trimmedUsername = request.getUsername() != null ? request.getUsername().trim() : null;
-        String trimmedEmail = request.getEmail() != null ? request.getEmail().trim() : null;
+        String username = request.getUsername() != null ? request.getUsername().trim() : null;
+        String email = request.getEmail() != null ? request.getEmail().trim() : null;
 
-        if (userRepository.findByUsername(trimmedUsername).isPresent()) {
-            throw new IllegalArgumentException("El nombre de usuario '" + trimmedUsername + "' ya está en uso.");
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new IllegalArgumentException("El nombre de usuario '" + username + "' ya está en uso.");
         }
-        if (userRepository.findByEmail(trimmedEmail).isPresent()) {
-            throw new IllegalArgumentException("El correo '" + trimmedEmail + "' ya está registrado.");
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("El correo '" + email + "' ya está registrado.");
         }
 
-        // 2. Preparar el objeto User.
         User user = new User();
-        user.setUsername(trimmedUsername);
-        user.setEmail(trimmedEmail);
-        // NO trim() en password para permitir espacios si el usuario lo desea, 
-        // pero debe ser consistente con el login.
+        user.setUsername(username);
+        user.setEmail(email);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         
-        // 3. Persistencia en base de datos.
         User savedUser = userRepository.save(user);
-
-        // 4. Llamada al microservicio de cuentas (delegada a AccountServiceClient para que funcione el AOP/CircuitBreaker)
         accountServiceClient.createAccount(savedUser.getId());
 
         return new UserResponseDTO(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail());
     }
 
     public String login(LoginRequest request) {
-        // Trim en email es estándar, pero en password es arriesgado si no se hizo en register.
-        // Lo removemos del password para ser consistentes con register (donde no se hizo trim).
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 request.getEmail().trim(), 
                 request.getPassword()
             )
         );
-        return jwtService.generateToken(authentication.getName());
+        User user = userRepository.findByEmail(request.getEmail().trim())
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return jwtService.generateToken(authentication.getName(), user.getId());
     }
 
     @Transactional(readOnly = true)

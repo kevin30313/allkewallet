@@ -177,7 +177,59 @@ body {
   box-shadow: 0 0 30px var(--neon-blue);
 }
 
-/* 7. FOOTER Y BADGES */
+.neon-button:disabled {
+  border-color: #30363d;
+  color: #30363d;
+  cursor: not-allowed;
+}
+
+.neon-button:disabled:hover {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* 7. SPINNER CSS */
+.spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.spinner {
+  animation: rotate 2s linear infinite;
+  width: 20px;
+  height: 20px;
+}
+
+.spinner .path {
+  stroke: currentColor;
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+/* 8. FOOTER Y BADGES */
 .auth-footer {
   padding: 1.5rem;
   text-align: center;

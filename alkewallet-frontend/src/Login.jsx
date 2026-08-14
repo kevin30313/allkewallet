@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { authApi as api } from "./api"; // Importamos 'authApi' y le ponemos el alias 'api'
+import { useNavigate } from 'react-router-dom';
+import { authApi as api } from "./api";
 import './App.css';
 import TurtleCanvas from './TurtleCanvas';
 
 const Login = () => {
+    const navigate = useNavigate();
     const [credentials, setCredentials] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -14,33 +17,29 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
         localStorage.removeItem('token'); 
         
         try {
             const response = await api.post('/auth/login', credentials);
-            
-            // CORRECCIÓN AQUÍ: Extraemos el string dentro de la propiedad 'token'
-          const tokenStr = response.data; 
+            const tokenStr = response.data?.token || response.data; 
     
-        if (tokenStr) {
-        localStorage.setItem('token', tokenStr);
-        console.log("Token guardado exitosamente:", tokenStr);
-        window.location.href = '/dashboard'; 
-    }   
-        else {
-        console.error("No se recibió un token válido:", response.data);
-        setError('Error en la estructura de datos del servidor.');
-    }
-}
+            if (tokenStr && typeof tokenStr === 'string') {
+                localStorage.setItem('token', tokenStr);
+                navigate('/dashboard'); 
+            } else {
+                setError('Error en la estructura de datos del servidor.');
+            }
         } catch (err) {
-            console.error("Error en login:", err.response || err);
             if (err.response?.status === 403) {
                 setError('Acceso denegado (403). Intenta borrar la caché o revisar el rol.');
             } else if (err.response?.status === 401) {
                 setError('Credenciales incorrectas. Verifica tu correo y contraseña.');
             } else {
-                setError('Error: El servidor  está despertando. Reintenta en unos segundos.');
+                setError('Error: El servidor está despertando. Reintenta en unos segundos.');
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -101,8 +100,17 @@ const Login = () => {
                                 required
                             />
                             
-                            <button type="submit" className="neon-button">
-                                INGRESAR
+                            <button type="submit" className="neon-button" disabled={loading}>
+                                {loading ? (
+                                    <span className="spinner-container">
+                                        <svg className="spinner" viewBox="0 0 50 50">
+                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
+                                        </svg>
+                                        PROCESANDO...
+                                    </span>
+                                ) : (
+                                    "INGRESAR"
+                                )}
                             </button>
 
                             {error && (
@@ -124,7 +132,7 @@ const Login = () => {
             <footer className="auth-footer">
                 <p>© 2026 AlkeWallet | Desarrollado por Kevin Rojas | Cloud Engineering Student</p>
                 <div className="tech-badges" style={{ marginTop: '10px' }}>
-                    <span>Java</span><span>AWS</span><span>Docker</span><span>React</span>
+                    <span>Java</span><span>GCP</span><span>Docker</span><span>React</span>
                 </div>
             </footer>
         </div>

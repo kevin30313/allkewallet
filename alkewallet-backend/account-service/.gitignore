@@ -1,4 +1,5 @@
 # Archivos de configuración con secretos
+.env
 application.properties
 # Si tienes perfiles específicos, ignóralos también
 application-*.properties

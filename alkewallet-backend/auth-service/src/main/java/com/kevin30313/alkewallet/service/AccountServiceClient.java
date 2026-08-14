@@ -2,7 +2,6 @@ package com.kevin30313.alkewallet.service;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.kevin30313.alkewallet.exception.AccountServiceException;
@@ -12,14 +11,12 @@ import java.util.concurrent.TimeoutException;
 @Component
 public class AccountServiceClient {
 
-    @Autowired
-    private WebClient accountWebClient;
+    private final WebClient accountWebClient;
 
-    /**
-     * Llama al microservicio de cuentas. 
-     * Al estar en un componente separado, el proxy de Spring interceptará la llamada
-     * y activará el CircuitBreaker correctamente.
-     */
+    public AccountServiceClient(WebClient accountWebClient) {
+        this.accountWebClient = accountWebClient;
+    }
+
     @CircuitBreaker(name = "accountService", fallbackMethod = "fallbackAccountService")
     public void createAccount(Long userId) {
         accountWebClient.post()
@@ -29,9 +26,6 @@ public class AccountServiceClient {
             .block(java.time.Duration.ofSeconds(10));
     }
 
-    /**
-     * Fallback para la creación de cuenta.
-     */
     public void fallbackAccountService(Long userId, Throwable t) {
         String message = "El servicio de cuentas no está disponible en este momento.";
         

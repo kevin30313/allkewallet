@@ -12,7 +12,7 @@ const Register = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     
-    const navigate = useNavigate(); // Hook para redirección suave
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({
@@ -27,17 +27,10 @@ const Register = () => {
         setLoading(true);
 
         try {
-            // Usamos authApi para apuntar a la base con /api y el endpoint /auth/register
-            const response = await authApi.post('/auth/register', formData);
-
-            console.log("Registro exitoso:", response.data);
+            await authApi.post('/auth/register', formData);
             alert('¡Usuario creado con éxito! Ahora puedes iniciar sesión.');
-            
-            // Redirección al Login usando el router
             navigate('/login');
         } catch (err) {
-            console.error("Error en el proceso de registro:", err);
-            
             if (err.response && err.response.status === 400) {
                 setError('El usuario o email ya existe, o los datos son inválidos.');
             } else {
@@ -49,7 +42,7 @@ const Register = () => {
     };
 
     return (
-        <div className="login-container"> {/* Usando tu clase de App.css */}
+        <div className="login-container">
             <form onSubmit={handleSubmit}>
                 <h2 className="title">ALKEWALLET</h2>
                 <p className="subtitle" style={{ color: 'var(--text-dim)', marginBottom: '1.5rem' }}>

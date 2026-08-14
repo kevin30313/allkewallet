@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -14,40 +15,34 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // IMPORTANTE: Esta llave debe ser secreta y tener al menos 32 caracteres.
-    // Al dejarla fija, los tokens no fallarán cuando Render reinicie el servidor.
-    private static final String SECRET_STRING = "XGHAlEE$4k79fjfjxllejhhggoisnn#$457680&";
+    @Value("${jwt.secret}")
+    private String secretKey;
 
-    // Genera la llave de firma a partir del String anterior
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(
-                java.util.Base64.getEncoder().encodeToString(SECRET_STRING.getBytes())
+                java.util.Base64.getEncoder().encodeToString(secretKey.getBytes())
         );
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // 1. Generar el Token 
-    public String generateToken(String username) {
+    public String generateToken(String username,Long userId) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("userId",userId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 horas
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // 2. Extraer el nombre de usuario del token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // 3. Validar si el token es legítimo
     public boolean isTokenValid(String token, String userDetailsUsername) {
         final String username = extractUsername(token);
         return (username.equals(userDetailsUsername)) && !isTokenExpired(token);
     }
-
-    // --- MÉTODOS DE APOYO ---
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
