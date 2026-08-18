@@ -26,3 +26,25 @@ accountApi.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+export const getUserByUsername = async (username) => {
+  const response = await authApi.get(`/auth/users/${username}`);
+  return response.data;
+};
+
+export const transferMoney = async (destinationUserId, amount) => {
+  const response = await accountApi.post('/accounts/transfer', {
+    destinationUserId,
+    amount,
+  });
+  return response.data;
+};
+
+export const getMyAccount = async () => {
+  const response = await accountApi.get('/accounts/me');
+  return response.data;
+};
+
+export const getMyTransactions = async () => {
+  const response = await accountApi.get('/accounts/me/transactions');
+  return response.data;
+};

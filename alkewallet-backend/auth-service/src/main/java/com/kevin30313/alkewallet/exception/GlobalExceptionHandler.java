@@ -59,6 +59,21 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Captura cuando se busca un usuario que no existe.
+     * Retorna un HTTP 404 Not Found.
+     */
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleUserNotFound(UserNotFoundException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("error", "No Encontrado");
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    /**
      * Captura errores inesperados del servidor.
      */
     @ExceptionHandler(Exception.class)

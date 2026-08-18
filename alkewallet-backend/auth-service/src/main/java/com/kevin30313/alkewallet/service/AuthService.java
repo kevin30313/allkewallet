@@ -75,4 +75,11 @@ public class AuthService {
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
+
+    @Transactional(readOnly = true)
+    public UserResponseDTO getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username.trim())
+            .orElseThrow(() -> new com.kevin30313.alkewallet.exception.UserNotFoundException("Usuario no encontrado: " + username));
+        return new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail());
+    }
 }

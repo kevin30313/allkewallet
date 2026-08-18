@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kevin30313.alkewallet.dto.LoginRequest;
@@ -44,5 +45,10 @@ public class AuthController {
             token = token.substring(7);
         }
         return ResponseEntity.ok(authService.getUserProfile(token));
+    }
+
+    @GetMapping("/users/{username}")
+    public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(authService.getUserByUsername(username));
     }
 }

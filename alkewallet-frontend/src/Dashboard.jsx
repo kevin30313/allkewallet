@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { authApi, accountApi } from "./api";
+import { authApi, accountApi, getUserByUsername } from "./api";
 import './Dashboard.css';
 import TurtleCanvas from './TurtleCanvas';
 
@@ -59,18 +59,24 @@ const Dashboard = () => {
     };
 
     const handleEnviar = async () => {
-        const destinationUserId = prompt("ID del usuario destino:");
-        if (!destinationUserId) return;
+        const destinationUsername = prompt("Nombre de usuario del destinatario:");
+        if (!destinationUsername) return;
         const monto = prompt("¿Cuánto quieres enviar?");
         if (!monto || isNaN(monto) || Number(monto) <= 0) return;
         try {
+            const destinationUser = await getUserByUsername(destinationUsername.trim());
             await accountApi.post('/accounts/transfer', {
-                destinationUserId: Number(destinationUserId),
+                destinationUserId: destinationUser.id,
                 amount: Number(monto)
             });
             await loadAccountData();
+            alert(`Transferencia de $${Number(monto).toLocaleString('es-CL')} enviada a ${destinationUser.username}`);
         } catch (err) {
-            alert(err.response?.data?.message || "No se pudo procesar la transferencia");
+            if (err.response?.status === 404 || err.message?.includes("Usuario no encontrado")) {
+                alert("No se encontró un usuario con ese nombre.");
+            } else {
+                alert(err.response?.data?.message || "No se pudo procesar la transferencia");
+            }
         }
     };
 
